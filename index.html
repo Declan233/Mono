@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link  rel="stylesheet" type="text/css" href="css/easyui.css">
+	<link  rel="stylesheet" type="text/css" href="css/icon.css">
+	<script type="text/javascript"  src="js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/json2.js"></script>
+	<style type="text/css"> @import url(css/index.css); </style>
+
+	<link rel="stylesheet"
+		  href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		  crossorigin="anonymous">
+	<script
+			src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+			integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+			crossorigin="anonymous"></script>
+
+<title>大富翁</title>
+</head>
+<script>
+
+function startgame(){
+	//获取玩家数量
+    var playernum = $('#playernumber option:selected').val();
+    var playinfo = {};//{"pcount":"","players":[]}
+    playinfo.pcount = playernum;
+    playinfo.players = [];//[{},{},{}...]
+    var wrap,intel=-1;
+    for(var i=0;i<playernum;i++){
+		playinfo.players[i] = {};//{color:"",name,"",human,""}
+		wrap = $("div#player"+(i+1)+"wrap");
+		intel = wrap.find("select.player-intel").val();
+
+		playinfo.players[i].name = wrap.find("input.player-name").val();
+        playinfo.players[i].color = wrap.find("select.player-color").val();
+		playinfo.players[i].token = wrap.find("select.player-token").val();
+
+    }
+
+    sessionStorage.setItem("playinfo", JSON.stringify(playinfo));
+
+    window.self.location = "gameBoard.html";
+}
+
+
+$(function () {  
+	$('#myTab a:last').tab('show');//初始化显示哪个tab  
+	  $('#myTab a').click(function (e) {  
+	    e.preventDefault();//阻止a链接的跳转行为  
+	    $(this).tab('show');//显示当前选中的链接及关联的content  
+	  }); 
+	}) 
+</script>
+
+<body>
+	<div class="container" id="win">
+		<div class="col-md-1" ></div>
+		<div class="col-md-5"  id="setup">
+			<div style="margin-bottom: 20px;">
+				选择玩家个数.
+				<select id="playernumber" title="选择玩家个数." >
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4" selected="selected">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+				</select>
+			</div>
+			<div id="player-wrappers"></div>
+			<div id="btndiv">
+				<input type="button" value="开始游戏" onclick="startgame()">
+			</div>
+			<div id="tip">提示: 刷新页面会导致游戏直接终止.</div>
+		</div>
+		<div class="col-md-5" id="rules">
+			<div>游戏规则</div>
+			
+			
+			<!-- 导航区 -->    
+			<ul class="nav nav-tabs" role="tablist">    
+				<li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
+				<li role="presentation"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+				<li role="presentation"><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
+				<li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>  
+			</ul>     
+  
+			<!-- 面板区 -->   
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="home">1</div>    
+				<div role="tabpanel" class="tab-pane" id="profile">2</div>    
+				<div role="tabpanel" class="tab-pane" id="messages">3</div>    
+				<div role="tabpanel" class="tab-pane" id="settings">4</div>   
+			</div>    
+			
+		</div>
+	</div>
+
+
+
+	
+	
+</body>
+</html>

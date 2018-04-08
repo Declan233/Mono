@@ -1,0 +1,514 @@
+body {
+	background: #F5FFFA;
+	min-width: 1075px;
+}
+
+td {
+	font-size: 12px;
+	font-family: arial, sans-serif;
+	/*border: 1px solid black;*/
+	text-align: center;
+}
+
+.cell {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	padding: 0px;
+	margin: 2px;
+	vertical-align: bottom;
+	background-repeat: no-repeat;
+	background-size: auto 40px;
+	height: 90px;
+}
+#cell11{
+	padding: 0px;
+	vertical-align: top;
+}
+#cell0,#cell1,#cell2,#cell3,#cell4,#cell5,#cell6,#cell7,#cell8,#cell9,#cell10,#cell12,#cell13,#cell14,#cell15,#cell16,#cell17,#cell18,#cell19,#cell20,
+#cell21,#cell22,#cell23,#cell24,#cell25,#cell26,#cell27,#cell28,#cell29,#cell30,#cell31,#cell32,#cell33,#cell34,#cell35,#cell36,#cell37,#cell38,#cell39,#cell40,
+#cell41,#cell42,#cell43,#cell44,#cell45,#cell46,#cell47,#cell48,#cell49,#cell50,#cell51
+{
+	padding: 0px;
+}
+
+
+#jail{
+	text-align: center;
+	position: relative;
+	left:21%;
+	vertical-align: text-bottom;
+	border: 2px dashed dimgray;
+	width: 80%;
+	height: 80%;
+	background-color: whitesmoke;
+}
+
+#selfstudying{
+	float: none;
+}
+
+.board-center {
+	vertical-align: top;
+	border: none;
+	background-color: #F5FFFA;
+}
+
+
+#moneybar {
+	float: right;
+	background-color: #F5FFFA;
+	margin: 5px;
+	padding:5px;
+	padding-top: 20px;
+	z-index: 14;
+	position: relative;
+	down:-200px;
+	cursor: default;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+#moneybar table {
+	font-weight: bold;
+	border-spacing: 1px;
+}
+
+#moneybarwrap {
+	min-width: 135px;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.moneybarcell {
+	width: 83px;
+	min-width: 83px;
+}
+
+.moneybararrowcell {
+	background: #F5FFFA;
+	width: 30px;
+	border: none;
+	text-align: right;
+	padding: 0px;
+}
+
+.money-bar-arrow {
+	height: 30px;
+	width: 30px;
+	display: none;
+	transform:rotate(90deg);
+	-ms-transform:rotate(90deg); 	/* IE 9 */
+	-moz-transform:rotate(90deg); 	/* Firefox */
+	-webkit-transform:rotate(90deg); /* Safari 和 Chrome */
+}
+
+.cellinnerwrap{
+	height:90px;
+	margin:2px;
+	border-radius: 5px;
+	border: 1px dashed darkgrey;
+}
+
+.innerSquare{
+	height:75px;
+	line-height: 75px;
+	overflow: hidden;
+
+}
+.holderposition{
+	height:12%;
+
+}
+
+#statsbackground {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background-color: #000000;
+	opacity: .5;
+	display: none;
+	z-index: 16;
+}
+#stats {
+	max-width: 914px;
+	min-width: 454px;
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	padding: 10px;
+	text-align: center;
+	word-wrap: break-word;
+	line-height: 1.5;
+	border: 2px solid black;
+	border-radius: 10px;
+	background-color: white;
+	display: block;
+	z-index: 17;
+	margin: auto;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	-webkit-user-select: none;
+	user-select: none;
+}
+#statswrap {
+	position: absolute;
+	top: 250px;
+	left: 0px;
+	width: 100%;
+	display: none;
+	background-color: transparent;
+	-webkit-user-select: none;
+	user-select: none;
+}
+#statstext {
+	overflow: hidden;
+	min-height: 70px;
+}
+#statsclose {
+	display: block;
+	position: absolute;
+	top: -24px;
+	right: -25px;
+	width: 30px;
+	height: 30px;
+	border: none;
+	cursor: pointer;
+	overflow: visible;
+	z-index: 17;
+}
+#statsdrag {
+	width: 100%;
+	height: 16px;
+	position: absolute;
+	top: -16px;
+	cursor: move;
+}
+.statscellcolor {
+	padding: 0px;
+	width: 22px;
+	height: 20px;
+	border: none;
+}
+.statscellname {
+	height: 20px;
+	border: none;
+	cursor: default;
+	text-align: left;
+	min-width: 172px;
+}
+
+.statsplayername {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.statscell {
+	border: 2px solid black;
+	padding: 8px;
+	vertical-align: top;
+	width: 202px;
+	min-width: 115px;
+}
+
+
+
+#displayCell{
+	margin-top: 15px;
+	width: 100%;
+	height: 700px;
+	border: 6px double #87CEFA;
+	border-radius: 20px;
+	background: beige;
+}
+
+#displayTitle{
+	width: 100%;
+	position: relative;
+	top: 0px;
+	height:50px;
+	line-height: 50px;
+	color:white;
+	font-size: large;
+	font-family: "American Typewriter";
+	background: tomato;
+	opacity: 1;
+	border-top-left-radius: 14px;
+	border-top-right-radius: 14px;
+	cursor: default;
+}
+#savetofile {
+	position: absolute;
+	right: 10px;
+	top:18px;
+	font-size: medium;
+	cursor:pointer;
+}
+#displayInfo{
+	overflow-y: scroll;
+	height: 630px;
+	width: 100%;
+}
+
+
+/*    ----------------    骰子    ----------------------    */
+
+.demo{ margin-top:10px;padding:10px; border: 2px solid slategray; border-radius: 8px;height:auto;}
+.dicewrap{margin:auto auto; position:relative; height:90px;}
+.dice{padding:auto;autowidth:90px; height:90px; background:url(../image/dice.png) no-repeat; cursor:pointer;}
+.dice_1{background-position:-5px -4px}
+.dice_2{background-position:-5px -107px}
+.dice_3{background-position:-5px -212px}
+.dice_4{background-position:-5px -317px}
+.dice_5{background-position:-5px -427px}
+.dice_6{background-position:-5px -535px}
+.dice_t{background-position:-5px -651px}
+.dice_s{background-position:-5px -763px}
+.dice_e{background-position:-5px -876px}
+p#result{text-align:center; font-size:16px;}
+p#result span{font-weight:bold; color:#f30; margin:6px}
+#dice_mask{width:90px; height:90px; background:#fff; opacity:0; position:absolute; top:0; left:0; z-index:999}
+
+
+
+
+
+
+
+
+
+/* THE SPEECH BUBBLE
+------------------------------------------------------------------------------------------------------------------------------- */
+
+.triangle-obtuse {
+	position:relative;
+	padding:6px;
+	margin:4px;
+	color:#333333;
+	border: 3px solid black;
+	background: white;
+	animation:mymove 1s;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+	cursor: default;
+}
+
+@keyframes mymove
+{
+	from {left:-100px;}
+	to {left:0px;}
+}
+
+
+
+/*    ----------------    地契    ----------------------    */
+#enlarge-wrap {
+	border: none;
+	z-index: 0;
+}
+
+
+.enlarge {
+	width: 150px;
+	height: 200px;
+	display: none;
+	background-color: white;
+	border: 2px solid black;
+	text-align: center;
+	font-size: 12px;
+	font-family: arial, sans-serif;
+	position: fixed;
+	z-index: 15;
+}
+
+.enlarge-color {
+	background: white;
+	width: 100%;
+	height: 40px;
+}
+
+.enlarge-name {
+	font-weight: bold;
+	font-size: 20px;
+	background-color: white;
+	height: 45px;
+}
+
+.enlarge-price {
+	background-color: white;
+	vertical-align: bottom;
+	height: 25px;
+}
+
+.enlarge-token {
+	height: 45px;
+	width: 150px;
+}
+
+#deedcolor {
+	background: white;
+	width: 100%;
+	height: 48px;
+}
+
+#deedname {
+	margin-top: 10px;
+	font-weight: bold;
+	font-size: 20px;
+	background-color: white;
+}
+
+
+#deed {
+	display: none;
+	position: fixed;
+	border: 2px solid black;
+	width: 235px;
+	height: 275px;
+	background-color: white;
+	z-index: 18;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+#deed td{
+	border: none;
+}
+
+#deed-header {
+	width: 215px;
+	height: 48px;
+	border: 1px solid black;
+	margin: 9px;
+	background-color: yellow;
+	text-align: center;
+	text-transform: uppercase;
+	font-family: Calibri, Arial;
+}
+
+#deed-name {
+	font-size: 15px;
+	font-weight: bold;
+
+}
+
+#deed-table {
+	margin: 9px;
+	width: 217px;
+	border-spacing: 1px;
+}
+
+#deed-mortgaged {
+	font-family: Calibri, Arial;
+	font-size: 16px;
+	text-align: center;
+
+}
+
+#deed-mortgaged-name {
+	font-size: 18px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 30px 20px 20px;
+}
+
+#deed-special {
+	font-family: Calibri, Arial;
+	text-align: justify;
+}
+
+#deed-special-name {
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	border-style: solid;
+	border-width: 2px 0px;
+	text-transform: uppercase;
+	margin: 50px 20px 20px;
+}
+
+#deed-special-text {
+	margin: 20px;
+	font-size: 15px;
+}
+
+#deed-special-footer {
+	margin: 0px 20px;
+	width: 195px;
+	position: absolute;
+	bottom: 20px;
+	font-size: 16px;
+}
+
+
+
+/*-----------------------弹出窗口-----------------------*/
+#popupbackground {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background-color: #000000;
+	opacity: 0.5;
+	display: none;
+	z-index: 10;
+}
+
+
+#popup {
+	width: 300px;
+	min-width: 300px;
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	padding: 10px;
+	text-align: center;
+	word-wrap: break-word;
+	line-height: 1.5;
+	border: 2px solid black;
+	border-radius: 10px;
+	background-color: white;
+	display: block;
+	z-index: 13;
+	margin: auto;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+#popupwrap {
+	position: absolute;
+	top: 255px;
+	left: 0px;
+	width: 100%;
+	display: none;
+	background-color: transparent;
+	z-index: 13;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+#popuptext {
+	overflow-x: auto;
+}
+
+
+#popupclose input {
+	margin: 0px;
+	background-color: red;
+	height: 18px;
+	width: 18px;
+	padding: 0px;
+}
+
+
+
+#popupdrag {
+	width: 100%;
+	height: 16px;
+	position: absolute;
+	top: -16px;
+	cursor: move;
+}

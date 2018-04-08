@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<link  rel="stylesheet" type="text/css" href="css/easyui.css">
+	<link  rel="stylesheet" type="text/css" href="css/icon.css">
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="js/json2.js"></script>
+	<script type="text/javascript" src="js/angular.js"></script>
+	<script type="text/javascript" src="js/board.js"></script>
+	<script type="text/javascript" src="js/values.js"></script>
+	<script type="text/javascript" src="js/file.js"></script>
+	<style type="text/css">@import url(css/board.css);</style>
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+
+
+<title>Board</title>
+</head>
+<script>
+	
+</script>
+<body ng-app="myApp">
+	<div class="container">
+		<table class="col-md-12" id="board" >
+			<tr>
+				<td class="cell col-md-1" id="cell30"></td>
+				<td class="cell col-md-1" id="cell31"></td>
+				<td class="cell col-md-1" id="cell32"></td>
+				<td class="cell col-md-1" id="cell33"></td>
+				<td class="cell col-md-1" id="cell34"></td>
+				<td colspan="2" class="board-center col-md-2"></td>
+				<td class="cell col-md-1" id="cell39"></td>
+				<td class="cell col-md-1" id="cell40"></td>
+				<td class="cell col-md-1" id="cell41"></td>
+				<td class="cell col-md-1" id="cell42"></td>
+				<td class="cell col-md-1" id="cell43"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell29"></td>
+				<td colspan="3" rowspan="8" class="board-center col-md-3">
+					<div id="displayCell">
+						<div id="displayTitle">游戏消息
+							<span onclick="saveTofile()" class="glyphicon glyphicon-save" aria-hidden="true" id="savetofile" ></span></div>
+						<div id="displayInfo"></div>
+					</div>
+				</td>
+				<td class="cell col-md-1" id="cell35"></td>
+				<td class="cell col-md-1" id="cell36"></td>
+				<td class="cell col-md-1" id="cell37"></td>
+				<td class="cell col-md-1" id="cell38"></td>
+				<td colspan="3" rowspan="8" class="board-center col-md-3">
+					<div id="moneybarwrap">
+						<div id="moneybar" ng-controller="moneybar">
+							<table>
+								<tr id="moneybarrow" class="money-bar-row" ng-repeat="p in ps">
+									<td class="moneybararrowcell">
+										<img src="image/combo_arrow.png" id="arrow{{ $index+1 }}" class="money-bar-arrow" alt=">" />
+									</td><td style="border: 2px solid {{p.color}}" class="moneybarcell">
+									<div><span>{{ p.name }}</span>:</div>
+									<div>$<span>{{ p.money }}</span></div>
+								</td>
+								<tr>
+									<td class="moneybararrowcell"></td>
+									<td style="padding-top: 5px">
+										<button type="button" class="btn btn-info" id="viewstats" onclick="showStats()" title="点击将弹出一个对话框显示每个玩家的资产情况.">房产统计</button>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</td>
+				<td class="cell col-md-1" id="cell44"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell28"></td>
+				<td colspan="4" rowspan="2" class="board-center col-md-4">
+
+					<div class="demo">
+						<div class="dicewrap">
+							<div class="col-md-2" style="height: 90px"></div>
+							<div id="dice1" class="dice dice_1 col-md-4"></div>
+							<div id="dice2" class="dice dice_1 col-md-4"></div>
+							<div class="col-md-2" style="height: 90px"></div>
+						</div>
+						<div style="height: 50px;margin-top: 10px">
+						<button type="button" class="btn btn-primary col-md-6" id="rollbtn">扔骰子</button>
+						<button type="button" class="btn btn-danger col-md-6" id="endTurn">结束回合</button>
+						</div>
+					</div>
+
+				</td>
+				<td class="cell col-md-1" id="cell45"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell27"></td>
+				<td class="cell col-md-1" id="cell46"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell26"></td>
+				<td class="cell col-md-1" id="cell12"></td>
+				<td class="cell col-md-1" id="cell11"></td>
+				<td class="cell col-md-1" id="cell10"></td>
+				<td class="cell col-md-1" id="cell9"></td>
+				<td class="cell col-md-1" id="cell47"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell25"></td>
+				<td class="cell col-md-1" id="cell13"></td>
+				<td colspan="2" rowspan="5" class="board-center col-md-2">
+				</td>
+				<td class="cell col-md-1" id="cell8"></td>
+				<td class="cell col-md-1" id="cell48"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell24"></td>
+				<td class="cell col-md-1" id="cell14"></td>
+				<td class="cell col-md-1" id="cell7"></td>
+				<td class="cell col-md-1" id="cell49"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell23"></td>
+				<td class="cell col-md-1" id="cell15"></td>
+				<td class="cell col-md-1" id="cell6"></td>
+				<td class="cell col-md-1" id="cell50"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell22"></td>
+				<td class="cell col-md-1" id="cell16"></td>
+				<td class="cell col-md-1" id="cell5"></td>
+				<td class="cell col-md-1" id="cell51"></td>
+			</tr>
+			<tr>
+				<td class="cell col-md-1" id="cell21">
+					<div class="cellinnerwrap">
+						<div id="jail" class="innerSquare">监狱
+							<div class="holderposition" id="holder20.5"></div>
+						</div>
+						<div class="holderposition" id="holder21"></div>
+					</div>
+				</td>
+				<td class="cell col-md-1" id="cell20"></td>
+				<td class="cell col-md-1" id="cell19"></td>
+				<td class="cell col-md-1" id="cell18"></td>
+				<td class="cell col-md-1" id="cell17"></td>
+
+				<td class="cell col-md-1" id="cell4"></td>
+				<td class="cell col-md-1" id="cell3"></td>
+				<td class="cell col-md-1" id="cell2"></td>
+				<td class="cell col-md-1" id="cell1"></td>
+				<td class="cell col-md-1" id="cell0"></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="statsbackground"></div>
+	<div id="statswrap">
+		<div id="stats">
+			<div style="position: relative;">
+				<img id="statsclose" src="image/close.png" title="Close" alt="x" />
+				<div id="statstext"></div>
+				<div id="statsdrag"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="popupbackground"></div>
+	<div id="popupwrap">
+		<div id="popup">
+			<div style="position: relative">
+				<div id="popuptext"></div>
+				<div id="popupdrag"></div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="deed">
+		<div id="deed-normal" style="display: none;">
+			<div id="deed-header">
+				<div style="margin: 5px; font-size: 11px;">T I T L E&nbsp;&nbsp;地契</div>
+				<div id="deed-name"></div>
+			</div>
+			<table id="deed-table">
+				<tr>
+					<td colspan="2">
+						租金&nbsp;$<span id="deed-baserent">12</span>.
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;">1间房</td>
+					<td style="text-align: right;">$&nbsp;&nbsp;&nbsp;<span id="deed-rent1">60</span>.</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;">2间房</td>
+					<td style="text-align: right;"><span id="deed-rent2">180</span>.</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;">3间房</td>
+					<td style="text-align: right;"><span id="deed-rent3">500</span>.</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;">4间房</td>
+					<td style="text-align: right;"><span id="deed-rent4">700</span>.</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="margin-bottom: 8px;">旅馆 $<span id="deed-rent5">900</span>.</div>
+						<div>抵押价值 $<span id="deed-mortgage">80</span>.</div>
+						<div>房间升级价格 $<span id="deed-houseprice">100</span>. each</div>
+						<div>Hotels, $<span id="deed-hotelprice">100</span>. plus 4 houses</div>
+						<div style="font-size: 9px; font-style: italic; margin-top: 5px;">如果一个玩家拥有所有某一同色地产群,那么其中未升级的地产的租金将翻倍.</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="deed-mortgaged">
+			<div id="deed-mortgaged-name"></div>
+			<p>&bull;</p>
+			<div>MORTGAGED</div>
+			<div> for $<span id="deed-mortgaged-mortgage">80</span></div>
+			<p>&bull;</p>
+			<div style="font-style: italic; font-size: 13px; margin: 10px;">Card must be turned this side up if property is mortgaged</div>
+		</div>
+
+		<div id="deed-special">
+			<div id="deed-special-name"></div>
+			<div id="deed-special-text"></div>
+			<div id="deed-special-footer">
+				抵押价值
+				<span style="float: right;">$<span id="deed-special-mortgage">100</span>.</span>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
