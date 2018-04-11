@@ -13,31 +13,31 @@
  * @param rent5
  * @constructor
  */
-function Square(name, pricetext, color, price, groupNumber, baserent, rent1, rent2, rent3, rent4, rent5) {
+function Square(name, pricetext, color, price, groupNumber, rent0, rent1, rent2, rent3, rent4, rent5) {
 	this.name = name;
 	this.pricetext = pricetext;
 	this.color = color;
-	this.owner = 0;
+	this.owner = -1;
 	this.mortgage = false;
 	this.house = 0;
 	this.hotel = 0;
 	this.groupNumber = groupNumber || 0;
 	this.price = (price || 0);
-	this.baserent = (baserent || 0);
+	this.rent0 = (rent0 || 0);
 	this.rent1 = (rent1 || 0);
 	this.rent2 = (rent2 || 0);
 	this.rent3 = (rent3 || 0);
 	this.rent4 = (rent4 || 0);
 	this.rent5 = (rent5 || 0);
-	this.landcount = 0;
+	this.level = 0;
 	
 	if (groupNumber === 3 || groupNumber === 4) {
 		this.houseprice = 50;
-	} else if (groupNumber === 5 || groupNumber === 6 || groupNumber === 11) {
+	} else if (groupNumber === 5 || groupNumber === 6 || groupNumber === 7) {
 		this.houseprice = 100;
-	} else if (groupNumber === 7 || groupNumber === 8) {
+	} else if (groupNumber === 8 || groupNumber === 9) {
 		this.houseprice = 150;
-	} else if (groupNumber === 9 || groupNumber === 10 || groupNumber === 12) {
+	} else if (groupNumber === 10 || groupNumber === 11 || groupNumber === 12) {
 		this.houseprice = 200;
 	} else {
 		this.houseprice = 0;
@@ -70,8 +70,7 @@ function Player(name, color, token) {
     this.creditor = -1;
     this.jail = false;
     this.jailroll = 0;
-    this.communityChestJailCard = false;
-    this.chanceJailCard = false;
+    this.JailCard = 0;
     this.bidding = true;
 
     this.pay = function (amount, creditor) {
@@ -92,58 +91,58 @@ function Player(name, color, token) {
 
 var square = [];
 
-square[0] = new Square("起点", "领取$200补助.", "#FFFFFF");
-square[1] = new Square("地中海大道", "$60", "#8B4513", 60, 3, 2, 10, 30, 90, 160, 250);//3
-square[2] = new Square("波罗的海大道", "$60", "#8B4513", 60, 3, 2, 10, 30, 90, 160, 250);//3
-square[3] = new Square("比萨斜塔", "$60", "#8B4513", 60, 3, 4, 20, 60, 180, 320, 450);//3
-square[4] = new Square("拉斯维加斯", "支付$200", "#FFFFFF");
+square[0] = new Square("起点", "领取$200补助.", "#FFFFFF", 0, 0);//0
+square[1] = new Square("地中海大道", "$60", "#8B4513", 60, 3, 8, 10, 30, 90, 160, 250);//3
+square[2] = new Square("波罗的海大道", "$60", "#8B4513", 60, 3, 8, 10, 30, 90, 160, 250);//3
+square[3] = new Square("比萨斜塔", "$60", "#8B4513", 60, 3, 12, 20, 60, 180, 320, 450);//3
+square[4] = new Square("拉斯维加斯", "支付$200", "#FFFFFF", 0, 0);//0
 square[5] = new Square("微软", "$200", "#FFFFFF", 200, 1);//1
-square[6] = new Square("罗马竞技场", "$100", "#87CEEB", 100, 4, 6, 30, 90, 270, 400, 550);//4
-square[7] = new Square("公益基金", "请遵从卡片的指示", "#FFFFFF");
-square[8] = new Square("埃菲尔铁塔", "$100", "#FF0080", 100, 5, 6, 30, 90, 270, 400, 550);//5
-square[9] = new Square("金门桥", "$120", "#87CEEB", 120, 4, 8, 40, 100, 300, 450, 600);//4
-square[10] = new Square("泰姬陵", "$220", "#FF0000", 220, 7, 18, 90, 250, 700, 875, 1050);//7
-square[11] = new Square("长城", "$140", "#FF0080", 140, 5, 10, 50, 150, 450, 625, 750);//5
-square[12] = new Square("免税店", "支付$50", "#FFFFFF");
-square[13] = new Square("开罗", "$140", "#FF0080", 140, 5, 10, 50, 150, 450, 625, 750);//5
-square[14] = new Square("圣彼得教堂", "$160", "#87CEEB", 160, 4, 12, 60, 180, 500, 700, 900);//4
+square[6] = new Square("罗马竞技场", "$100", "#87CEEB", 100, 4, 16, 30, 90, 270, 400, 550);//4
+square[7] = new Square("公益基金", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+square[8] = new Square("埃菲尔铁塔", "$100", "#FF0080", 100, 5, 20, 30, 90, 270, 400, 550);//5
+square[9] = new Square("金门桥", "$120", "#87CEEB", 120, 4, 28, 40, 100, 300, 450, 600);//4
+square[10] = new Square("泰姬陵", "$220", "#FF0000", 220, 7, 40, 90, 250, 700, 875, 1050);//7
+square[11] = new Square("长城", "$140", "#FF0080", 140, 5, 25, 50, 150, 450, 625, 750);//5
+square[12] = new Square("免税店", "支付$50", "#FFFFFF", 0, 0);//0
+square[13] = new Square("开罗", "$140", "#FF0080", 140, 5, 30, 50, 150, 450, 625, 750);//5
+square[14] = new Square("圣彼得教堂", "$160", "#87CEEB", 160, 4, 38, 60, 180, 500, 700, 900);//4
 square[15] = new Square("IBM", "$200", "#FFFFFF", 200, 1);//1
-square[16] = new Square("市政厅广场", "$180", "#FFA500", 180, 6, 14, 70, 200, 550, 750, 950);//6
-square[17] = new Square("机遇", "请遵从卡片的指示", "#FFFFFF");
-square[18] = new Square("希腊神庙", "$180", "#FFA500", 180, 6, 14, 70, 200, 550, 750, 950);//6
-square[19] = new Square("白金汉宫", "$200", "#FFA500", 200, 6, 16, 80, 220, 600, 800, 1000);//6
-square[20] = new Square("免费停车场", "捡到$50", "#FFFFFF");
-square[21] = new Square("路过", "", "#FFFFFF");
-square[22] = new Square("联合国", "请遵从卡片的指示", "#FFFFFF");
-square[23] = new Square("卢浮宫", "$220", "#FF0000", 220, 7, 18, 90, 250, 700, 875, 1050);//7
-square[24] = new Square("古城堡", "$240", "#FF0000", 240, 7, 20, 100, 300, 750, 925, 1100);//7
+square[16] = new Square("市政厅广场", "$180", "#FFA500", 180, 6, 44, 70, 200, 550, 750, 950);//6
+square[17] = new Square("机遇", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+square[18] = new Square("希腊神庙", "$180", "#FFA500", 180, 6, 44, 70, 200, 550, 750, 950);//6
+square[19] = new Square("白金汉宫", "$200", "#FFA500", 200, 6, 46, 80, 220, 600, 800, 1000);//6
+square[20] = new Square("免费停车场", "捡到$50", "#FFFFFF", 0, 0);//0
+square[21] = new Square("路过", "", "#FFFFFF", 0, 2);//2
+square[22] = new Square("联合国", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+square[23] = new Square("卢浮宫", "$220", "#FF0000", 220, 7, 58, 90, 250, 700, 875, 1050);//7
+square[24] = new Square("古城堡", "$240", "#FF0000", 240, 7, 60, 100, 300, 750, 925, 1100);//7
 square[25] = new Square("ORACLE", "$200", "#FFFFFF", 200, 1);//1
-square[26] = new Square("悉尼歌剧院", "$260", "#FFFF00", 260, 8, 22, 110, 330, 800, 975, 1150);//8
-square[27] = new Square("金字塔", "$260", "#FFFF00", 260, 8, 22, 110, 330, 800, 975, 1150);//8
+square[26] = new Square("悉尼歌剧院", "$260", "#FFFF00", 260, 8, 72, 110, 330, 800, 975, 1150);//8
+square[27] = new Square("金字塔", "$260", "#FFFF00", 260, 8, 72, 110, 330, 800, 975, 1150);//8
 square[28] = new Square("东方明珠", "$150", "#FFFFFF", 150, 2);//2
-square[29] = new Square("布达拉宫", "$280", "#FFFF00", 280, 8, 24, 120, 360, 850, 1025, 1200);//8
+square[29] = new Square("布达拉宫", "$280", "#FFFF00", 280, 8, 74, 120, 360, 850, 1025, 1200);//8
 square[30] = new Square("亚特兰大", "$200", "#FFFFFF", 200, 2);//2
-square[31] = new Square("科隆大教堂", "$300", "#008000", 300, 9, 26, 130, 390, 900, 110, 1275);//9
-square[32] = new Square("凯旋门", "$300", "#008000", 300, 9, 26, 130, 390, 900, 110, 1275);//9
+square[31] = new Square("科隆大教堂", "$300", "#008000", 300, 9, 76, 130, 390, 900, 110, 1275);//9
+square[32] = new Square("凯旋门", "$300", "#008000", 300, 9, 76, 130, 390, 900, 110, 1275);//9
 square[33] = new Square("红十字", "$150", "#FFFFFF", 150, 1);//1
-square[34] = new Square("国会大厦", "$320", "#008000", 320, 9, 28, 150, 450, 1000, 1200, 1400);//9
-square[35] = new Square("入狱", "发现作弊行为，送入监狱.", "#FFFFFF");
-square[36] = new Square("香港", "捡到$100", "#FFFFFF");
-square[37] = new Square("黑天鹅堡", "$350", "#0000FF", 350, 10, 35, 175, 500, 1100, 1300, 1500);//10
-square[38] = new Square("白宫", "请遵从卡片的指示", "#FFFFFF");
-square[39] = new Square("伦敦塔桥", "$400", "#0000FF", 400, 10, 50, 200, 600, 1400, 1700, 2000);//10
-square[40] = new Square("布赖斯峡谷", "$450", "#0000FF", 450, 10, 50, 300, 700, 1600, 1900, 2200);//10
-square[41] = new Square("乾清宫", "$250", "#00f08F", 250, 11, 50, 200, 400, 800, 1200, 1500);//11
+square[34] = new Square("国会大厦", "$320", "#008000", 320, 9, 78, 150, 450, 1000, 1200, 1400);//9
+square[35] = new Square("入狱", "发现作弊行为，送入监狱.", "#FFFFFF", 0, 2);//2
+square[36] = new Square("香港", "捡到$100", "#FFFFFF", 0, 0);//0
+square[37] = new Square("黑天鹅堡", "$350", "#0000FF", 350, 10, 85, 175, 500, 1100, 1300, 1500);//10
+square[38] = new Square("白宫", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+square[39] = new Square("伦敦塔桥", "$400", "#0000FF", 400, 10, 100, 200, 600, 1400, 1700, 2000);//10
+square[40] = new Square("布赖斯峡谷", "$450", "#0000FF", 450, 10, 120, 300, 700, 1600, 1900, 2200);//10
+square[41] = new Square("乾清宫", "$250", "#00f08F", 250, 11, 100, 200, 400, 800, 1200, 1500);//11
 square[42] = new Square("空中花园", "$160", "#7B68EE", 160, 12, 50, 100, 150, 400, 800, 1300);//12
-square[43] = new Square("大堡礁", "$200", "#00f08F", 200, 11, 50, 300, 700, 1600, 1900, 2200);//11
+square[43] = new Square("大堡礁", "$200", "#00f08F", 200, 11, 120, 300, 700, 1600, 1900, 2200);//11
 square[44] = new Square("WTO", "$200", "#FFFFFF", 200, 1);//1
-square[45] = new Square("金庙", "$220", "#7B68EE", 220, 12, 18, 90, 250, 700, 875, 1050);//12
-square[46] = new Square("威尼斯", "$100", "#7B68EE", 100, 12, 50, 70, 200, 400, 800, 1250);//12
-square[47] = new Square("迪拜", "请遵从卡片的指示", "#FFFFFF");
-square[48] = new Square("约旦佩特拉城", "$400", "#00f08F", 400, 11, 50, 300, 700, 1600, 1900, 2200);//11
-square[49] = new Square("尼亚加拉瀑布", "$60", "#8B4513", 60, 3, 4, 20, 60, 180, 320, 450);//3
+square[45] = new Square("金庙", "$220", "#7B68EE", 220, 12, 48, 90, 250, 700, 875, 1050);//12
+square[46] = new Square("威尼斯", "$100", "#7B68EE", 100, 12, 48, 70, 200, 400, 800, 1250);//12
+square[47] = new Square("迪拜", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+square[48] = new Square("约旦佩特拉城", "$400", "#00f08F", 400, 30, 50, 300, 700, 1600, 1900, 2200);//11
+square[49] = new Square("尼亚加拉瀑布", "$60", "#8B4513", 60, 3, 10, 20, 60, 180, 320, 450);//3
 square[50] = new Square("中国城", "$150", "#FFFFFF", 150, 2);//2
-square[51] = new Square("洛基山脉", "$180", "#FFA500", 180, 6, 14, 70, 200, 550, 750, 950);//6
+square[51] = new Square("洛基山脉", "$180", "#FFA500", 180, 6, 44, 70, 200, 550, 750, 950);//6
 
 
 

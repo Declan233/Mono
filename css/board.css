@@ -111,14 +111,20 @@ td {
 }
 
 .innerSquare{
-	height:75px;
-	line-height: 75px;
+	height:60px;
+	line-height: 60px;
 	overflow: hidden;
-
 }
 .holderposition{
-	height:12%;
-
+	height:15px;
+}
+.owenerholder {
+	height:13px;
+	opacity: 0.8;
+	border-radius: 5px;
+	margin: 1px 15px;
+	color: black;
+	line-height:13px;
 }
 
 #statsbackground {
