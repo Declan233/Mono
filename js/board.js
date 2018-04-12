@@ -261,10 +261,6 @@ function Game() {
 
 
 
-function play() {
-
-
-}
 
 
 
@@ -315,6 +311,7 @@ function roll() {
                 p.position = 21 + die1 + die2;
             }else {//继续监狱生活
                 console.log("您未能掷出相同数，继续在监狱呆着.");
+                $("#endTurn").prop('disabled', false);
                 return;
             }
         }
@@ -402,10 +399,17 @@ function land()
         case 2:
             //运气卡
             break;
+        case 13:
+            break;
         default:
             if(s.owner==-1){
                 //无主 可以购买
                 popup(p.position);
+            }else if(s.owner==turn){
+                if (s.level==5){
+
+                }else
+                    levelUp(p.position);
             }else{
                 //支付租金
                 payRent();
@@ -415,10 +419,6 @@ function land()
 
 }
 
-
-function payFine() {
-    
-}
 
 
 function endTurn() {
@@ -439,7 +439,6 @@ function endTurn() {
 function popup(position)
 {
     var s = square[position];
-    var p = player[turn];
     document.getElementById("popup").style.width = "300px";
     document.getElementById("popup").style.top = "0px";
     document.getElementById("popup").style.left = "0px";
@@ -463,23 +462,32 @@ function popup(position)
 
     $("#popupno").on("click", function() {
         $("#popupwrap").hide();
+
+        document.getElementById("cell"+position).style.backgroundColor = "#ffffff";
+        document.getElementById("cell"+position).style.zIndex =  0;
+        document.getElementById("cell"+position).style.position =  "";
         $("#popupbackground").fadeOut(400);
     });
     $("#popupyes").on("click", function() {
         buy(position,turn);
         $("#popupwrap").hide();
+        document.getElementById("cell"+position).style.backgroundColor = "#ffffff";
+        document.getElementById("cell"+position).style.zIndex =  0;
+        document.getElementById("cell"+position).style.position =  "";
         $("#popupbackground").fadeOut(400);
     });
 
 
     // Show using animation.
     $("#popupbackground").fadeIn(400, function() {
+
         $("#popupwrap").show();
     });
+    document.getElementById("cell"+position).style.backgroundColor = "#F5FFFA";
+    document.getElementById("cell"+position).style.zIndex =  13;
+    document.getElementById("cell"+position).style.position =  "relative";
 
 }
-
-
 
 
 
@@ -645,12 +653,61 @@ function addMoney(num,index) {
     player[index].money += num;
 }
 
+function payFine() {
+    addMoney(-50,turn);
+}
+
 function buy(position,index) {
     square[position].owner = index;
     document.getElementById("owenerholder"+position).style.border = "2px solid "+player[index].color;
     document.getElementById("owenerholder"+position).innerText = "Level 0";
     addMoney(-square[position].price,turn);
     infoDisplay(player[turn].name+" 花费了 $"+square[position].price+" 购买了房产："+square[position].name,player[turn].color);
+}
+
+function levelUp(position)
+{
+    var s = square[position];
+    document.getElementById("popup").style.width = "300px";
+    document.getElementById("popup").style.top = "0px";
+    document.getElementById("popup").style.left = "0px";
+
+    document.getElementById("popuptext").innerHTML =
+        "<h4 style='color:"+s.color+"'>"+s.name+"</h4>" +
+        "<div><span>当前等级: $"+s.level+"  </span>" +
+        "<span>基础房租: $"+s.rent0+"</span></div>" +
+        "<div><span>一级房租: $"+s.rent1+"  </span>" +
+        "<span>二级房租: $"+s.rent2+"</span></div>" +
+        "<div><span>三级房租: $"+s.rent3+"  </span>" +
+        "<span>一级旅馆房租: $"+s.rent4+"</span></div>" +
+        "<div><span>二级旅馆房租: $"+s.rent5+"  </span>" +
+        "<span>升级费用: $"+s.houseprice+"</span></div>";
+
+    document.getElementById("popuptext").innerHTML +=
+        "<div>" +
+        "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">升级</button>" +
+        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+        "</div>";
+
+    $("#levelupnp").on("click", function() {
+        $("#popupwrap").hide();
+        $("#popupbackground").fadeOut(400);
+    });
+    $("#levelupyes").on("click", function() {
+        s.level++;
+        addMoney(s.houseprice,turn);
+        document.getElementById("owenerholder"+position).innerText = "Level "+s.level;
+        infoDisplay(player[turn].name+" 花费了 $"+s.houseprice+" 把 "+s.name+" 升到了 "+s.level+" 级 ",player[turn].color);
+        $("#popupwrap").hide();
+        $("#popupbackground").fadeOut(400);
+    });
+
+
+    // Show using animation.
+    $("#popupbackground").fadeIn(400, function() {
+        $("#popupwrap").show();
+    });
+    
 }
 
 function payRent() {

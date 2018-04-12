@@ -72,22 +72,7 @@ function Player(name, color, token) {
     this.jailroll = 0;
     this.JailCard = 0;
     this.bidding = true;
-
-    this.pay = function (amount, creditor) {
-        if (amount <= this.money) {
-            this.money -= amount;
-            updateMoney();
-            return true;
-        } else {
-            this.money -= amount;
-            this.creditor = creditor;
-//			updateMoney();
-            return false;
-        }
-    };
 }
-
-
 
 var square = [];
 
@@ -119,9 +104,9 @@ square[24] = new Square("古城堡", "$240", "#FF0000", 240, 7, 60, 100, 300, 75
 square[25] = new Square("ORACLE", "$200", "#FFFFFF", 200, 1);//1
 square[26] = new Square("悉尼歌剧院", "$260", "#FFFF00", 260, 8, 72, 110, 330, 800, 975, 1150);//8
 square[27] = new Square("金字塔", "$260", "#FFFF00", 260, 8, 72, 110, 330, 800, 975, 1150);//8
-square[28] = new Square("东方明珠", "$150", "#FFFFFF", 150, 2);//2
+square[28] = new Square("东方明珠", "$150", "#FFFFFF", 150, 13);//13
 square[29] = new Square("布达拉宫", "$280", "#FFFF00", 280, 8, 74, 120, 360, 850, 1025, 1200);//8
-square[30] = new Square("亚特兰大", "$200", "#FFFFFF", 200, 2);//2
+square[30] = new Square("布赖斯峡谷", "$450", "#0000FF", 450, 10, 120, 300, 700, 1600, 1900, 2200);//10
 square[31] = new Square("科隆大教堂", "$300", "#008000", 300, 9, 76, 130, 390, 900, 110, 1275);//9
 square[32] = new Square("凯旋门", "$300", "#008000", 300, 9, 76, 130, 390, 900, 110, 1275);//9
 square[33] = new Square("红十字", "$150", "#FFFFFF", 150, 1);//1
@@ -131,7 +116,7 @@ square[36] = new Square("香港", "捡到$100", "#FFFFFF", 0, 0);//0
 square[37] = new Square("黑天鹅堡", "$350", "#0000FF", 350, 10, 85, 175, 500, 1100, 1300, 1500);//10
 square[38] = new Square("白宫", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
 square[39] = new Square("伦敦塔桥", "$400", "#0000FF", 400, 10, 100, 200, 600, 1400, 1700, 2000);//10
-square[40] = new Square("布赖斯峡谷", "$450", "#0000FF", 450, 10, 120, 300, 700, 1600, 1900, 2200);//10
+square[40] = new Square("亚特兰大", "$200", "#FFFFFF", 200, 13);//13
 square[41] = new Square("乾清宫", "$250", "#00f08F", 250, 11, 100, 200, 400, 800, 1200, 1500);//11
 square[42] = new Square("空中花园", "$160", "#7B68EE", 160, 12, 50, 100, 150, 400, 800, 1300);//12
 square[43] = new Square("大堡礁", "$200", "#00f08F", 200, 11, 120, 300, 700, 1600, 1900, 2200);//11
@@ -149,6 +134,9 @@ square[51] = new Square("洛基山脉", "$180", "#FFA500", 180, 6, 44, 70, 200, 
 
 var communityChestCards = [];
 var chanceCards = [];
+var unCards = [];
+var dbCards = [];
+
 
 communityChestCards[0] = new Card("出狱卡，这张卡将会被保存到使用或者交易出去.", function(p) { });
 communityChestCards[1] = new Card("您获得了诺贝尔化学奖，奖金$10.", function() { });
