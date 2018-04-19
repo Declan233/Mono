@@ -23,6 +23,8 @@ var game;
 var player = [];
 var pcount = parseInt(playersinfo.pcount,10);
 var turn = 0, doublecount = 0;
+var dir = 1, rate=1,round=0 ,round2=0;
+var holdtime = 1200;
 
 /**
  * 棋盘初始化
@@ -34,11 +36,19 @@ function initBoard() {
 
     var HTML = "";
     for (var i = 0; i < 52; i++) {
-        HTML += "<div id='enlarge" + i + "' class='enlarge'>";
-        HTML += "<div id='enlarge" + i + "color' class='enlarge-color'></div><br/>" +
-            "<div id='enlarge" + i + "name' class='enlarge-name'></div>";
-        HTML += "<br /><div id='enlarge" + i + "price' class='enlarge-price'></div>";
-        HTML += "<br /><div id='enlarge" + i + "token' class='enlarge-token'></div></div>";
+        if(i!=21){
+            HTML += "<div id='enlarge" + i + "' class='enlarge'>";
+            HTML += "<div id='enlarge" + i + "color' class='enlarge-color'></div><br/>" +
+                "<div id='enlarge" + i + "name' class='enlarge-name'></div>";
+            HTML += "<br /><div id='enlarge" + i + "price' class='enlarge-price'></div>";
+            HTML += "<br /><div id='enlarge" + i + "token' class='enlarge-token'></div></div>";
+        }else{
+            HTML+= "<div id='enlarge20_5' class='enlarge'>";
+            HTML += "<div id='enlarge20_5color' class='enlarge-color'></div><br/>" +
+                "<div id='enlarge20_5name' class='enlarge-name'>监狱</div>";
+            HTML += "<br /><div id='enlarge20_5price' class='enlarge-price'></div>";
+            HTML += "<br /><div id='enlarge20_5token' class='enlarge-token'></div></div>";
+        }
     }
     enlargeWrap.innerHTML = HTML;
 
@@ -86,9 +96,10 @@ function initPlayers(){
 
 
 var app = angular.module('myApp', []);
-app.controller("moneybar",function ($scope,$interval) {
+app.controller("moneybar",function ($scope,$interval)
+{
     for (var i = 0; i < pcount; i++)
-        player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token);
+        player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token,i);
 
     $scope.ps = player;
 
@@ -197,6 +208,7 @@ function showStats(){
 function Game() {
     var die1;//骰子1
     var die2;//骰子2
+    var Rent;
 
 
     this.rollDice = function(){
@@ -238,9 +250,9 @@ function Game() {
 
 
     this.next = function() {
-
+        // console.log(turn);
         if (player[turn].money < 0) {//还款后余额还是低于0，宣布破产
-            console.log(p.name+" is bankrupted");
+            console.log(player[turn].name+" is bankrupted");
             bankrupt();
         } else {//继续游戏
             roll();
@@ -254,6 +266,49 @@ function Game() {
             return die2;
         }
     };//获取骰子点数
+
+    this.over = function () {
+        console.log("恭喜"+player[0].name);
+    }
+
+    this.pay = function() {
+        var p = player[turn];
+        var s = square[p.position];
+        var rent = 0;
+        switch (s.level){
+            case 0:
+                rent = s.rent0;
+                break;
+            case 1:
+                rent = s.rent1;
+                break;
+            case 2:
+                rent = s.rent2;
+                break;
+            case 3:
+                rent = s.rent3;
+                break;
+            case 4:
+                rent = s.rent4;
+                break;
+            case 5:
+                rent = s.rent5;
+                break;
+        }
+        rent = parseInt(rent*rate);
+        addMoney(-rent,p.id);
+        addMoney(rent,s.owner);
+        infoDisplay(p.name+" 支付了 $"+rent+" 给 "+player[getIndexbyId(s.owner)].name,p.color);
+        Rent = rent;
+    }
+
+    this.getRent = function(){
+        return Rent;
+    }
+
+    this.payFine = function () {
+        addMoney(-50,player[turn].id);
+    }
 
 
 
@@ -270,24 +325,34 @@ function roll() {
     game.rollDice();
     var die1 = game.getDie(1);
     var die2 = game.getDie(2);
+    var start = p.position;
+    var end = 0;
 
     if (die1 == die2 && !p.jail) {//相同数且不在监狱
         if (doublecount < 3) {
             //相同数次数小于3
-            p.position += die1 + die2;
-            if (p.position >= 52) {
+            p.position += (die1 + die2)*dir;
+            end = p.position;
+            if (p.position >= 52&&dir==1) {
                 p.position -= 52;
-                addMoney(200,turn);
+                end = p.position;
+                addMoney(200,p.id);
+                infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
+            }else if(p.position < 0&&dir==-1){
+                p.position += 52;
+                end = p.position;
+                addMoney(200,p.id);
+                infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
             }
             infoDisplay(p.name+" 扔出了: "+(die1+die2)+" -- 相同数，到达了 " + square[p.position].name+" 同时获得再掷一次的机会.",p.color);
-            updatePosition();//更新位置
-            land();     //执行方格内容
+            updatePosition(start,end);//更新位置
+            setTimeout(land,holdtime);//执行方格内容
             $("#rollbtn").prop('disabled', false);
         } else if (doublecount === 3) {
             p.jail = true;
             doublecount = 0;
             console.log(p.name + " 连续三次掷出了双数");
-            // popup();
+            popup(35,2);
             goToJail();
         }
         return;
@@ -299,16 +364,13 @@ function roll() {
             $("#landed").hide();
             p.jail = false;
             p.jailroll = 0;
-            p.position = 21 + die1 + die2;
+            p.position = 21 + (die1 + die2)*dir;end = p.position;
             doublecount = 0;
             console.log(p.name + " 掷出了双数，离开了监狱.");
         }else {//不同数
             if (p.jailroll === 3) {//连续三回合可交50罚款出狱
-                //     popup("<p>您可以支付 $50 保释自己.</p>", function() {
-                //     payFine();
-                //     p.position = 21 + die1 + die2;
-                // });
-                p.position = 21 + die1 + die2;
+                    popup(21,3);
+                p.position = 21 + (die1 + die2)*dir;end = p.position;
             }else {//继续监狱生活
                 console.log("您未能掷出相同数，继续在监狱呆着.");
                 $("#endTurn").prop('disabled', false);
@@ -317,16 +379,20 @@ function roll() {
         }
         doublecount = 0;
     }else {//不是相同数
-        p.position += die1 + die2;
+        p.position += (die1 + die2)*dir;end = p.position;
     }
-    if (p.position >= 52) {
-        p.position -= 52;
-        addMoney(200,turn);
+    if (p.position >= 52&&dir==1) {
+        p.position -= 52;end = p.position;
+        addMoney(200,p.id);
+        infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
+    }else if(p.position < 0&&dir==-1){
+        p.position += 52;end = p.position;
+        addMoney(200,p.id);
         infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
     }
     infoDisplay(p.name+" 扔出了: "+(die1+die2)+" 到达了 "+square[p.position].name,p.color);
-    updatePosition();//更新位置
-    land();     //执行方格内容
+    updatePosition(start,end);//更新位置
+    setTimeout(land,holdtime);//执行方格内容
     $("#endTurn").prop('disabled', false);
 
 }
@@ -336,16 +402,36 @@ function roll() {
 function goToJail(){
 
 
+    var p = player[turn];
+    var start = p.position;
+    var end = "20_5";
+    p.jail=true;
+    p.position = 20.5;
+    updatePosition(start,end);
+
     //自动结束当前回合，进入下一个玩家的回合
     $("#endTurn").prop('disabled', true);
     $("#rollbtn").prop('disabled', false);
     turn++;
-    if (turn==pcount)
+    if (turn==pcount){
         turn = 0;
-    doublecount = 0
+        if(round!=0){
+            round--;
+        }else if(round==0&&dir==-1){
+            dir=1;
+            infoDisplay("行走方向恢复为顺时针");
+        }if(round2!=0){
+            round2--;
+        }else if(round2==0&&rate!=1){
+            rate=1;
+            infoDisplay("租金收取恢复正常");
+        }
+    }
+    doublecount = 0;
+
 }
 
-function updatePosition()
+function updatePosition(start,end)
 {
     var sq;
     for (var x = 0; x < 52; x++) {
@@ -354,12 +440,42 @@ function updatePosition()
         // console.log(holder);
         holder.innerHTML="";
         for (var y = 0; y < pcount; y++) {
-            if (player[y].position == x && !player[y].jail)
+            if (player[y].position == x && y!=turn && !player[y].jail)
                 holder.innerHTML += "<span class='glyphicon glyphicon-"+ player[y].token +"' title='" + player[y].name + "' aria-hidden='true' style='color: " + player[y].color + ";'></span>";
-
         }
-        // if (player[y].jail)
-        //     document.getElementById("mandatorystudying").innerHTML += "<span class='glyphicon glyphicon-star-empty' title='" + player[y].name + "' aria-hidden='true' style='color: " + player[y].color + ";'></span>";
+    }
+
+    if(start!=100&&end!=100){
+        //跳跃动画
+        var p1 = $("#holder" + start);
+        var p2 = $("#holder" + end);
+        var p1_top = p1.offset().top;
+        var p1_left= p1.offset().left+38;
+        var p2_top = p2.offset().top;
+        var p2_left = p2.offset().left+38;
+
+        var movingcube = document.getElementById("movingicon");
+        movingcube.className = "glyphicon glyphicon-"+player[turn].token;
+        movingcube.style.color = player[turn].color;
+        $("#movingicon").show();
+
+        var ss = document.styleSheets[3];
+        ss.deleteRule(1);
+
+        var rule = "@keyframes move{" +
+            "    0% {top:"+p1_top+"px;left:"+p1_left+"px;font-size:12px;}" +
+            "    50% {font-size:40px;}" +
+            "    100% {top:"+p2_top+"px;left:"+p2_left+"px;font-size:12px;}" +
+            "}";
+        ss.insertRule(rule,1);
+        
+        setTimeout(draw,holdtime);
+        function draw() {
+            document.getElementById("holder" + end).innerHTML +=
+                "<span class='glyphicon glyphicon-"+ player[turn].token +"' title='" + player[turn].name + "' aria-hidden='true' style='color: " + player[turn].color + ";'></span>";
+        }
+
+        console.log(player[turn].name+":\n"+p1_top+"  "+p1_left+"\n"+p2_top+"  "+p2_left);
 
     }
 
@@ -385,34 +501,104 @@ function infoDisplay(msg,color)
 
 function land()
 {
+    $("#movingicon").hide();
     var p = player[turn];
     var s = square[p.position];
 
     switch (s.groupNumber)
     {
         case 0:
-            //直接加减钱
+            switch (p.position){
+                case 4:
+                    addMoney(-140,p.id);
+                    popup(p.position,2);
+                    infoDisplay(p.name+" 到达拉斯维加斯，缴纳了$140赌资.",p.color);
+                    break;
+                case 12:
+                    addMoney(-50,p.id);
+                    popup(p.position,2);
+                    infoDisplay(p.name+" 到达免税店，花费$50购物.",p.color);
+                    break;
+                case 15:
+                    for(var i=0;i<pcount;i++){
+                        if(player[i].id!=p.id)
+                            addMoney(-40,player[i].id);
+                    }
+                    addMoney((pcount-1)*40,p.id);
+                    popup(p.position,2);
+                    infoDisplay(p.name+" 到达WTO，贸易频繁，资金流转不周，向其他每个玩家收取 $40 ,共获得 $"+(pcount-1)*40,p.color);
+                    break;
+                case 20:
+                    addMoney(50,p.id);
+                    infoDisplay(p.name+" 到达免费停车场，捡到$50.",p.color);
+                    break;
+                case 36:
+                    rate = 1.1;round2=2;
+                    infoDisplay(p.name+" 到达香港，所有房产租金连续三回合提升10%.",p.color);
+                    break;
+                case 50:
+                    dir=-1;round=2;
+                    infoDisplay(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.");
+                    break;
+            }
             break;
         case 1:
-            //公司或者组织
+            //公司
+            switch (p.position){
+                case 5:
+                    // square[5] = new Square("微软", "$200", "#FFFFFF", 200, 1);//1
+                    if(s.owner==-1)
+                        popup(p.position,1);
+                    else if(s.owner==p.id)
+                        console.log("MICROSOFT");
+                    break;
+                case 25:
+                    // square[25] = new Square("ORACLE", "$200", "#FFFFFF", 200, 1);//1
+                    if(s.owner==-1)
+                        popup(p.position,1);
+                    else if(s.owner==p.id)
+                        console.log("ORACLE");
+                    break;
+                case 33:
+                    if(s.owner==-1)
+                        popup(p.position,1);
+                    else if(s.owner==p.id)
+                        console.log("出狱卡1张");
+                    break;
+                case 44:
+                    // square[44] = new Square("IBM", "$200", "#FFFFFF", 200, 1);//1
+                    if(s.owner==-1)
+                        popup(p.position,1);
+                    else if(s.owner==p.id)
+                        console.log("IBM");
+                    break;
+            }
             break;
         case 2:
-            //运气卡
+            switch (p.position) {
+                case 21:
+                    popup(p.position,2);
+                    break;
+                case 35:
+                    popup(p.position,2);
+                    goToJail();
+                    break;
+            }
             break;
         case 13:
             break;
         default:
             if(s.owner==-1){
                 //无主 可以购买
-                popup(p.position);
-            }else if(s.owner==turn){
+                popup(p.position,0);
+            }else if(s.owner==p.id){
                 if (s.level==5){
 
                 }else
                     levelUp(p.position);
             }else{
                 //支付租金
-                payRent();
+                game.pay();
             }
             break;
     }
@@ -421,22 +607,148 @@ function land()
 
 
 
-function endTurn() {
+function endTurn()
+{
     //当结束回合按钮被按下
     $("#endTurn").click(function () {
         $("#endTurn").prop('disabled', true);
         $("#rollbtn").prop('disabled', false);
         $("#arrow"+(turn+1) ).hide();
         turn++;
-        if (turn==pcount)
+        if (turn==pcount){
             turn = 0;
-        doublecount = 0
+            if(round!=0){
+                round--;
+            }else if(round==0&&dir==-1){
+                dir=1;
+                infoDisplay("行走方向恢复为顺时针");
+            }if(round2!=0){
+                round2--;
+            }else if(round2==0&&rate!=1){
+                rate=1;
+                infoDisplay("租金收取恢复正常");
+            }
+        }
+        doublecount = 0;
         $("#arrow"+(turn+1)).show();
+
 
     })
 }
 
-function popup(position)
+function popup(position,type)
+{
+    var s = square[position];
+        document.getElementById("popup").style.width = "300px";
+        document.getElementById("popup").style.top = "0px";
+        document.getElementById("popup").style.left = "0px";
+        if(type==0) {
+            document.getElementById("popuptext").innerHTML =
+                "<h3 style='color:" + s.color + "'>" + s.name + "</h3>" +
+                "<div><span>购买价格: $" + s.price + "  </span>" +
+                "<span>基础房租: $" + s.rent0 + "</span></div>" +
+                "<div><span>一级房租: $" + s.rent1 + "  </span>" +
+                "<span>二级房租: $" + s.rent2 + "</span></div>" +
+                "<div><span>三级房租: $" + s.rent3 + "  </span>" +
+                "<span>一级旅馆房租: $" + s.rent4 + "</span></div>" +
+                "<div><span>二级旅馆房租: $" + s.rent5 + "  </span>" +
+                "<span>升级费用: $" + s.houseprice + "</span></div>";
+        }else if(type==1){
+            document.getElementById("popuptext").innerHTML =
+                "<h3>" + s.name + "</h3>" +
+                "<div>购买价格: $" + s.price + "  </div>" +
+                "<div>说明: " + s.pricetext + "</div>" ;
+        }else if(type==2){
+            document.getElementById("popuptext").innerHTML =
+                "<h3>" + s.name + "</h3>" +
+                "<div>说明: " + s.pricetext + "</div>";
+        } else if(type==3){
+            document.getElementById("popuptext").innerHTML =
+                "<h3>" + s.name + "</h3>" +
+                "<div>您是否愿意花$50保释自己</div>";
+        }
+
+
+        if(type!=2&&type!=3) {
+
+            document.getElementById("popuptext").innerHTML +=
+                "<div>" +
+                "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"popupyes\">购买</button>" +
+                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >取消</button>" +
+                "</div>";
+
+            $("#popupno").on("click", function () {
+                $("#popupwrap").hide();
+
+                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
+                document.getElementById("cell" + position).style.zIndex = 0;
+                document.getElementById("cell" + position).style.position = "";
+                $("#popupbackground").fadeOut(400);
+            });
+            $("#popupyes").on("click", function () {
+                buy(position, player[turn].id, type);
+                $("#popupwrap").hide();
+                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
+                document.getElementById("cell" + position).style.zIndex = 0;
+                document.getElementById("cell" + position).style.position = "";
+                $("#popupbackground").fadeOut(400);
+            });
+
+        }else if(type==2){
+            document.getElementById("popuptext").innerHTML +=
+                "<div>" +
+                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >确定</button>" +
+                "</div>";
+
+            $("#popupno").on("click", function () {
+                $("#popupwrap").hide();
+                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
+                document.getElementById("cell" + position).style.zIndex = 0;
+                document.getElementById("cell" + position).style.position = "";
+                $("#popupbackground").fadeOut(400);
+            });
+
+        }else if(type==3){
+            document.getElementById("popuptext").innerHTML +=
+                "<div>" +
+                "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"popupyes\">保释</button>" +
+                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >取消</button>" +
+                "</div>";
+
+            $("#popupno").on("click", function () {
+                $("#popupwrap").hide();
+
+                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
+                document.getElementById("cell" + position).style.zIndex = 0;
+                document.getElementById("cell" + position).style.position = "";
+                $("#popupbackground").fadeOut(400);
+            });
+            $("#popupyes").on("click", function () {
+                player[turn].jail = false;
+                player[turn].jailroll = 0;
+                updatePosition(100,100);
+                $("#popupwrap").hide();
+                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
+                document.getElementById("cell" + position).style.zIndex = 0;
+                document.getElementById("cell" + position).style.position = "";
+                $("#popupbackground").fadeOut(400);
+            });
+        }
+
+
+
+        // Show using animation.
+        $("#popupbackground").fadeIn(400, function () {
+
+            $("#popupwrap").show();
+        });
+        document.getElementById("cell" + position).style.backgroundColor = "#F5FFFA";
+        document.getElementById("cell" + position).style.zIndex = 13;
+        document.getElementById("cell" + position).style.position = "relative";
+
+}
+
+function levelUp(position)
 {
     var s = square[position];
     document.getElementById("popup").style.width = "300px";
@@ -444,8 +756,8 @@ function popup(position)
     document.getElementById("popup").style.left = "0px";
 
     document.getElementById("popuptext").innerHTML =
-        "<h3 style='color:"+s.color+"'>"+s.name+"</h3>" +
-        "<div><span>购买价格: $"+s.price+"  </span>" +
+        "<h4 style='color:"+s.color+"'>"+s.name+"</h4>" +
+        "<div><span>当前等级: $"+s.level+"  </span>" +
         "<span>基础房租: $"+s.rent0+"</span></div>" +
         "<div><span>一级房租: $"+s.rent1+"  </span>" +
         "<span>二级房租: $"+s.rent2+"</span></div>" +
@@ -456,49 +768,92 @@ function popup(position)
 
     document.getElementById("popuptext").innerHTML +=
         "<div>" +
-        "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"popupyes\">购买</button>" +
-        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >取消</button>" +
+        "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">升级</button>" +
+        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
         "</div>";
 
-    $("#popupno").on("click", function() {
+    $("#levelupnp").on("click", function() {
         $("#popupwrap").hide();
-
-        document.getElementById("cell"+position).style.backgroundColor = "#ffffff";
-        document.getElementById("cell"+position).style.zIndex =  0;
-        document.getElementById("cell"+position).style.position =  "";
         $("#popupbackground").fadeOut(400);
     });
-    $("#popupyes").on("click", function() {
-        buy(position,turn);
+    $("#levelupyes").on("click", function() {
+        s.level++;
+        addMoney(s.houseprice,player[turn].id);
+        document.getElementById("owenerholder"+position).innerText = "Level "+s.level;
+        infoDisplay(player[turn].name+" 花费了 $"+s.houseprice+" 把 "+s.name+" 升到了 "+s.level+" 级 ",player[turn].color);
         $("#popupwrap").hide();
-        document.getElementById("cell"+position).style.backgroundColor = "#ffffff";
-        document.getElementById("cell"+position).style.zIndex =  0;
-        document.getElementById("cell"+position).style.position =  "";
         $("#popupbackground").fadeOut(400);
     });
 
 
     // Show using animation.
     $("#popupbackground").fadeIn(400, function() {
-
         $("#popupwrap").show();
     });
-    document.getElementById("cell"+position).style.backgroundColor = "#F5FFFA";
-    document.getElementById("cell"+position).style.zIndex =  13;
-    document.getElementById("cell"+position).style.position =  "relative";
 
 }
 
 
 
-
 function bankrupt() {
-    
+    var s;
+    var id = player[turn].id;
+    for(var i=0;i<52;i++){
+        s = square[i];
+        if(s.owner==id){
+            document.getElementById("owenerholder"+i).style.border = "";
+            document.getElementById("owenerholder"+i).innerText = "";
+            s.owner = -1;
+        }
+    }
+    infoDisplay(player[turn].name+" 已经破产 ");
+    player.splice(turn,1);pcount--;
+    updatePosition(100,100);
+
+    $("#endTurn").prop('disabled', true);
+    $("#rollbtn").prop('disabled', false);
+    if (turn==pcount){
+        turn = 0;
+        if(round!=0){
+            round--;
+        }else if(round==0&&dir==-1){
+            dir=1;
+            infoDisplay("行走方向恢复为顺时针");
+        }if(round2!=0){
+            round2--;
+        }else if(round2==0&&rate!=1){
+            rate=1;
+            infoDisplay("租金收取恢复正常");
+        }
+    }
+    doublecount = 0;
+    $("#arrow"+(player[turn].id+1)).show();
+    if(pcount==1)
+        game.over();
 }
 
 
 
 function mouse(i) {
+    if (i=="20_5"){
+        $("#jail").on("mousemove", function(e) {
+            // console.log(i);
+            var element = document.getElementById("enlarge20_5");
+
+            if (e.clientY + 20 > window.innerHeight - 204) {
+                // console.log(window.innerHeight - 204);
+                element.style.top = (window.innerHeight - 204) + "px";
+            } else {
+                element.style.top = (e.clientY + 20) + "px";
+            }
+            element.style.left = (e.clientX + 10) + "px";
+        }).on("mouseover",function () {
+            $("#enlarge20_5").show();
+        }).on("mouseout", function() {
+            $("#enlarge20_5").hide();
+        });
+    }else{
+
     $("#cell"+i).on("mousemove", function(e) {
         // console.log(i);
         var element = document.getElementById("enlarge"+i);
@@ -515,6 +870,7 @@ function mouse(i) {
     }).on("mouseout", function() {
         $("#enlarge" + i).hide();
     });
+    }
 }
 
 function deed() {
@@ -522,11 +878,13 @@ function deed() {
     var s;
 
     for (var i = 0; i < 52; i++) {
+        if(i!=21){
         s = square[i];
 
         document.getElementById("enlarge" + i + "color").style.backgroundColor = s.color;
         document.getElementById("enlarge" + i + "name").textContent = s.name;
         document.getElementById("enlarge" + i + "price").textContent = s.pricetext;
+        }
     }
 
     var drag, dragX, dragY, dragObj, dragTop, dragLeft;
@@ -649,92 +1007,33 @@ function showdeed(property) {
     }
 }
 
-function addMoney(num,index) {
-    player[index].money += num;
+function addMoney(num,id) {
+    player[getIndexbyId(id)].money += num;
 }
 
-function payFine() {
-    addMoney(-50,turn);
+
+function buy(position,id,type) {
+    square[position].owner = id;
+    document.getElementById("owenerholder" + position).style.border = "2px solid " + player[getIndexbyId(id)].color;
+    if(type==0) {
+        document.getElementById("owenerholder" + position).innerText = "Level 0";
+    }else if(type==1){
+        document.getElementById("owenerholder" + position).innerText = player[turn].name;
+    }
+        addMoney(-square[position].price, player[turn].id);
+        infoDisplay(player[turn].name + " 花费了 $" + square[position].price + " 购买了房产：" + square[position].name, player[turn].color);
+
 }
 
-function buy(position,index) {
-    square[position].owner = index;
-    document.getElementById("owenerholder"+position).style.border = "2px solid "+player[index].color;
-    document.getElementById("owenerholder"+position).innerText = "Level 0";
-    addMoney(-square[position].price,turn);
-    infoDisplay(player[turn].name+" 花费了 $"+square[position].price+" 购买了房产："+square[position].name,player[turn].color);
-}
-
-function levelUp(position)
-{
-    var s = square[position];
-    document.getElementById("popup").style.width = "300px";
-    document.getElementById("popup").style.top = "0px";
-    document.getElementById("popup").style.left = "0px";
-
-    document.getElementById("popuptext").innerHTML =
-        "<h4 style='color:"+s.color+"'>"+s.name+"</h4>" +
-        "<div><span>当前等级: $"+s.level+"  </span>" +
-        "<span>基础房租: $"+s.rent0+"</span></div>" +
-        "<div><span>一级房租: $"+s.rent1+"  </span>" +
-        "<span>二级房租: $"+s.rent2+"</span></div>" +
-        "<div><span>三级房租: $"+s.rent3+"  </span>" +
-        "<span>一级旅馆房租: $"+s.rent4+"</span></div>" +
-        "<div><span>二级旅馆房租: $"+s.rent5+"  </span>" +
-        "<span>升级费用: $"+s.houseprice+"</span></div>";
-
-    document.getElementById("popuptext").innerHTML +=
-        "<div>" +
-        "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">升级</button>" +
-        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
-        "</div>";
-
-    $("#levelupnp").on("click", function() {
-        $("#popupwrap").hide();
-        $("#popupbackground").fadeOut(400);
-    });
-    $("#levelupyes").on("click", function() {
-        s.level++;
-        addMoney(s.houseprice,turn);
-        document.getElementById("owenerholder"+position).innerText = "Level "+s.level;
-        infoDisplay(player[turn].name+" 花费了 $"+s.houseprice+" 把 "+s.name+" 升到了 "+s.level+" 级 ",player[turn].color);
-        $("#popupwrap").hide();
-        $("#popupbackground").fadeOut(400);
-    });
 
 
-    // Show using animation.
-    $("#popupbackground").fadeIn(400, function() {
-        $("#popupwrap").show();
-    });
+
+
+function getIndexbyId(id) {
+    for (var i=0;i<pcount;i++)
+        if(player[i].id == id)
+            return i;
     
 }
 
-function payRent() {
-    var rent=0;
-    var p = player[turn];
-    var s = square[p.position];
-    switch (s.level){
-        case 0:
-            rent = s.rent0;
-            break;
-        case 1:
-            rent = s.rent1;
-            break;
-        case 2:
-            rent = s.rent2;
-            break;
-        case 3:
-            rent = s.rent3;
-            break;
-        case 4:
-            rent = s.rent4;
-            break;
-        case 5:
-            rent = s.rent5;
-            break;
-    }
-    addMoney(-rent,turn);
-    addMoney(rent,s.owner);
-    infoDisplay(p.name+" 支付了 $"+rent+" 给 "+player[s.owner].name,p.color);
-}
+

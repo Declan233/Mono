@@ -5,6 +5,7 @@
 
 	<link  rel="stylesheet" type="text/css" href="css/easyui.css">
 	<link  rel="stylesheet" type="text/css" href="css/icon.css">
+	<link  rel="stylesheet" type="text/css" href="css/animation.css">
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="js/json2.js"></script>
@@ -73,6 +74,8 @@
 							</table>
 						</div>
 					</div>
+					<button class="btn-primary" onclick="bankrupt()">测试</button>
+					<div id="tttt">huanghuang</div>
 				</td>
 				<td class="cell col-md-1" id="cell44"></td>
 			</tr>
@@ -137,8 +140,9 @@
 			<tr>
 				<td class="cell col-md-1" id="cell21">
 					<div class="cellinnerwrap">
-						<div id="jail" class="innerSquare">监狱
-							<div class="holderposition" id="holder20.5"></div>
+						<div id="jail" onmousemove="mouse('20_5')">
+							<div style="height: 52px;line-height: 52px">监狱</div>
+							<div class="holderposition" id="holder20_5"></div>
 						</div>
 						<div class="holderposition" id="holder21"></div>
 					</div>
@@ -240,6 +244,9 @@
 			</div>
 		</div>
 	</div>
+
+
+	<span id="movingicon" aria-hidden='true'></span>
 
 
 </body>
