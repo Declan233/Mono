@@ -3,7 +3,6 @@
     display: none;
     height:15px;
     width:15px;
-    /*background: aqua;*/
     animation:move 1.2s 1;
     z-index: 20;
 
