@@ -14,3 +14,24 @@
      50% {top:0px;left:100px;}
      100% {top:100px;left:100px;}
  }
+
+
+.triangle-obtuse {
+    position:relative;
+    padding:6px;
+    margin:4px;
+    color:#333333;
+    border: 3px solid black;
+    background: white;
+    animation:mymove 1s;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius:10px;
+    cursor: default;
+}
+
+@keyframes mymove
+{
+    from {left:-100px;}
+    to {left:0px;}
+}

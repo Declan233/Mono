@@ -310,6 +310,38 @@ function Game() {
         addMoney(-50,player[turn].id);
     }
 
+    this.goToJail = function (){
+
+
+        var p = player[turn];
+        var start = p.position;
+        var end = "20_5";
+        p.jail=true;
+        p.position = "20_5";
+        updatePosition(start,end);
+
+        //自动结束当前回合，进入下一个玩家的回合
+        $("#endTurn").prop('disabled', true);
+        $("#rollbtn").prop('disabled', false);
+        turn++;
+        if (turn==pcount){
+            turn = 0;
+            if(round!=0){
+                round--;
+            }else if(round==0&&dir==-1){
+                dir=1;
+                infoDisplay("行走方向恢复为顺时针");
+            }if(round2!=0){
+                round2--;
+            }else if(round2==0&&rate!=1){
+                rate=1;
+                infoDisplay("租金收取恢复正常");
+            }
+        }
+        doublecount = 0;
+
+    }
+
 
 
 }
@@ -328,8 +360,10 @@ function roll() {
     var start = p.position;
     var end = 0;
 
-    if (die1 == die2 && !p.jail) {//相同数且不在监狱
-        if (doublecount < 3) {
+    if (die1 == die2 && !p.jail)
+    {//相同数且不在监狱
+        if (doublecount < 3)
+        {
             //相同数次数小于3
             p.position += (die1 + die2)*dir;
             end = p.position;
@@ -353,10 +387,12 @@ function roll() {
             doublecount = 0;
             console.log(p.name + " 连续三次掷出了双数");
             popup(35,2);
-            goToJail();
+            game.goToJail();
         }
         return;
-    } else if(p.jail === true){//在监狱
+    }
+    else if(p.jail === true)
+    {//在监狱
         p.jailroll++;
         if (die1 == die2) {//相同数可出狱
             document.getElementById("jail").style.border = "1px solid black";
@@ -398,38 +434,6 @@ function roll() {
 }
 
 
-
-function goToJail(){
-
-
-    var p = player[turn];
-    var start = p.position;
-    var end = "20_5";
-    p.jail=true;
-    p.position = 20.5;
-    updatePosition(start,end);
-
-    //自动结束当前回合，进入下一个玩家的回合
-    $("#endTurn").prop('disabled', true);
-    $("#rollbtn").prop('disabled', false);
-    turn++;
-    if (turn==pcount){
-        turn = 0;
-        if(round!=0){
-            round--;
-        }else if(round==0&&dir==-1){
-            dir=1;
-            infoDisplay("行走方向恢复为顺时针");
-        }if(round2!=0){
-            round2--;
-        }else if(round2==0&&rate!=1){
-            rate=1;
-            infoDisplay("租金收取恢复正常");
-        }
-    }
-    doublecount = 0;
-
-}
 
 function updatePosition(start,end)
 {
@@ -475,7 +479,7 @@ function updatePosition(start,end)
                 "<span class='glyphicon glyphicon-"+ player[turn].token +"' title='" + player[turn].name + "' aria-hidden='true' style='color: " + player[turn].color + ";'></span>";
         }
 
-        console.log(player[turn].name+":\n"+p1_top+"  "+p1_left+"\n"+p2_top+"  "+p2_left);
+        // console.log(player[turn].name+":\n"+p1_top+"  "+p1_left+"\n"+p2_top+"  "+p2_left);
 
     }
 
@@ -530,14 +534,17 @@ function land()
                     break;
                 case 20:
                     addMoney(50,p.id);
+                    popup(p.position,2);
                     infoDisplay(p.name+" 到达免费停车场，捡到$50.",p.color);
                     break;
                 case 36:
                     rate = 1.1;round2=2;
+                    popup(p.position,2);
                     infoDisplay(p.name+" 到达香港，所有房产租金连续三回合提升10%.",p.color);
                     break;
                 case 50:
                     dir=-1;round=2;
+                    popup(p.position,2);
                     infoDisplay(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.");
                     break;
             }
@@ -581,7 +588,7 @@ function land()
                     break;
                 case 35:
                     popup(p.position,2);
-                    goToJail();
+                    game.goToJail();
                     break;
             }
             break;
