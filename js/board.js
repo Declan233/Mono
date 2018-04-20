@@ -23,7 +23,7 @@ var game;
 var player = [];
 var pcount = parseInt(playersinfo.pcount,10);
 var turn = 0, doublecount = 0;
-var dir = 1, rate=1,round=0 ,round2=0;
+var dir = 1, rate=1, round=0 ,round2=0, round3=0;
 var holdtime = 1200;
 
 /**
@@ -53,9 +53,9 @@ function initBoard() {
     enlargeWrap.innerHTML = HTML;
 
     // Add images to enlarges.
-    document.getElementById("enlarge0token").innerHTML += '<img src="image/arrow_icon.png" height="40" width="136" alt="" />';
-    document.getElementById("enlarge20price").innerHTML += "<img src='image/free_parking_icon.png' height='80' width='72' alt='' style='position: relative; top: -20px;' />";
-    document.getElementById("enlarge38token").innerHTML += '<img src="image/tax_icon.png" height="60" width="70" alt="" style="position: relative; top: -20px;" />';
+    // document.getElementById("enlarge0token").innerHTML += '<img src="image/arrow_icon.png" height="40" width="136" alt="" />';
+    // document.getElementById("enlarge20price").innerHTML += "<img src='image/free_parking_icon.png' height='80' width='72' alt='' style='position: relative; top: -20px;' />";
+    // document.getElementById("enlarge38token").innerHTML += '<img src="image/tax_icon.png" height="60" width="70" alt="" style="position: relative; top: -20px;" />';
 
 
     for(var i=0;i<52;i++){
@@ -296,9 +296,13 @@ function Game() {
                 break;
         }
         rent = parseInt(rent*rate);
-        addMoney(-rent,p.id);
-        addMoney(rent,s.owner);
+        if(p.id!=square[25].owner||round3==0){
+        game.addMoney(-rent,p.id);
+        game.addMoney(rent,s.owner);
         infoDisplay(p.name+" 支付了 $"+rent+" 给 "+player[getIndexbyId(s.owner)].name,p.color);
+        }else{
+            infoDisplay("作为ORACLE的拥有者 "+p.name+" 该回合免税" );rent=0;
+        }
         Rent = rent;
     }
 
@@ -307,7 +311,7 @@ function Game() {
     }
 
     this.payFine = function () {
-        addMoney(-50,player[turn].id);
+        game.addMoney(-50,player[turn].id);
     }
 
     this.goToJail = function (){
@@ -316,32 +320,59 @@ function Game() {
         var p = player[turn];
         var start = p.position;
         var end = "20_5";
-        p.jail=true;
+        p.jail = true;
         p.position = "20_5";
         updatePosition(start,end);
+        infoDisplay(p.name+" 进了监狱");
 
-        //自动结束当前回合，进入下一个玩家的回合
-        $("#endTurn").prop('disabled', true);
-        $("#rollbtn").prop('disabled', false);
-        turn++;
-        if (turn==pcount){
-            turn = 0;
-            if(round!=0){
-                round--;
-            }else if(round==0&&dir==-1){
-                dir=1;
-                infoDisplay("行走方向恢复为顺时针");
-            }if(round2!=0){
-                round2--;
-            }else if(round2==0&&rate!=1){
-                rate=1;
-                infoDisplay("租金收取恢复正常");
+        setTimeout(autoendturn,holdtime);
+
+        function autoendturn() {
+            //自动结束当前回合，进入下一个玩家的回合
+            $("#endTurn").prop('disabled', true);
+            $("#rollbtn").prop('disabled', false);
+            $("#arrow"+(turn+1) ).hide();
+            turn++;
+            if (turn == pcount) {
+                turn = 0;
+                if (round != 0) {
+                    round--;
+                } else if (round == 0 && dir == -1) {
+                    dir = 1;
+                    infoDisplay("行走方向恢复为顺时针");
+                }
+                if (round2 != 0) {
+                    round2--;
+                } else if (round2 == 0 && rate != 1) {
+                    rate = 1;
+                    infoDisplay("租金收取恢复正常");
+                }
+                if (round3 != 0) {
+                    round3--;
+                }
             }
+            doublecount = 0;
+            $("#arrow"+(turn+1)).show();
         }
-        doublecount = 0;
 
     }
 
+    this.buy = function (position,id,type) {
+        square[position].owner = id;
+        document.getElementById("owenerholder" + position).style.border = "2px solid " + player[getIndexbyId(id)].color;
+        if(type==0) {
+            document.getElementById("owenerholder" + position).innerText = "Level 0";
+        }else if(type==1){
+            document.getElementById("owenerholder" + position).innerText = player[turn].name;
+        }
+        game.addMoney(-square[position].price, player[turn].id);
+        infoDisplay(player[turn].name + " 花费了 $" + square[position].price + " 购买了房产：" + square[position].name, player[turn].color);
+
+    }
+
+    this.addMoney = function (num,id) {
+        player[getIndexbyId(id)].money += num;
+    }
 
 
 }
@@ -362,21 +393,20 @@ function roll() {
 
     if (die1 == die2 && !p.jail)
     {//相同数且不在监狱
-        if (doublecount < 3)
-        {
+        if (doublecount < 3) {
             //相同数次数小于3
             p.position += (die1 + die2)*dir;
             end = p.position;
             if (p.position >= 52&&dir==1) {
                 p.position -= 52;
                 end = p.position;
-                addMoney(200,p.id);
-                infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
+                game.addMoney(500,p.id);
+                infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
             }else if(p.position < 0&&dir==-1){
                 p.position += 52;
                 end = p.position;
-                addMoney(200,p.id);
-                infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
+                game.addMoney(500,p.id);
+                infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
             }
             infoDisplay(p.name+" 扔出了: "+(die1+die2)+" -- 相同数，到达了 " + square[p.position].name+" 同时获得再掷一次的机会.",p.color);
             updatePosition(start,end);//更新位置
@@ -385,30 +415,28 @@ function roll() {
         } else if (doublecount === 3) {
             p.jail = true;
             doublecount = 0;
-            console.log(p.name + " 连续三次掷出了双数");
+            infoDisplay(p.name + " 连续三次掷出了双数");
             popup(35,2);
             game.goToJail();
         }
         return;
     }
-    else if(p.jail === true)
-    {//在监狱
+    else if(p.jail === true) {//在监狱
         p.jailroll++;
-        if (die1 == die2) {//相同数可出狱
+        if (die1 === die2) {//相同数可出狱
             document.getElementById("jail").style.border = "1px solid black";
             document.getElementById("cell11").style.border = "2px solid" + p.color;
-            $("#landed").hide();
             p.jail = false;
             p.jailroll = 0;
             p.position = 21 + (die1 + die2)*dir;end = p.position;
             doublecount = 0;
-            console.log(p.name + " 掷出了双数，离开了监狱.");
+            infoDisplay(p.name + " 掷出了双数，离开了监狱.");
         }else {//不同数
             if (p.jailroll === 3) {//连续三回合可交50罚款出狱
-                    popup(21,3);
-                p.position = 21 + (die1 + die2)*dir;end = p.position;
+                popup(21,3);
+                return;
             }else {//继续监狱生活
-                console.log("您未能掷出相同数，继续在监狱呆着.");
+                infoDisplay("您未能掷出相同数，继续在监狱呆着.",p.color);
                 $("#endTurn").prop('disabled', false);
                 return;
             }
@@ -419,12 +447,12 @@ function roll() {
     }
     if (p.position >= 52&&dir==1) {
         p.position -= 52;end = p.position;
-        addMoney(200,p.id);
-        infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
+        game.addMoney(500,p.id);
+        infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
     }else if(p.position < 0&&dir==-1){
         p.position += 52;end = p.position;
-        addMoney(200,p.id);
-        infoDisplay(p.name+" 经过起点获得 $200 基金.",p.color);
+        game.addMoney(500,p.id);
+        infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
     }
     infoDisplay(p.name+" 扔出了: "+(die1+die2)+" 到达了 "+square[p.position].name,p.color);
     updatePosition(start,end);//更新位置
@@ -447,6 +475,12 @@ function updatePosition(start,end)
             if (player[y].position == x && y!=turn && !player[y].jail)
                 holder.innerHTML += "<span class='glyphicon glyphicon-"+ player[y].token +"' title='" + player[y].name + "' aria-hidden='true' style='color: " + player[y].color + ";'></span>";
         }
+    }
+    var holder = document.getElementById("holder20_5");
+    holder.innerHTML = "";
+    for (var y = 0; y < pcount; y++) {
+        if (player[y].position == "20_5" && y!=turn)
+            holder.innerHTML += "<span class='glyphicon glyphicon-"+ player[y].token +"' title='" + player[y].name + "' aria-hidden='true' style='color: " + player[y].color + ";'></span>";
     }
 
     if(start!=100&&end!=100){
@@ -514,26 +548,26 @@ function land()
         case 0:
             switch (p.position){
                 case 4:
-                    addMoney(-140,p.id);
+                    game.addMoney(-140,p.id);
                     popup(p.position,2);
                     infoDisplay(p.name+" 到达拉斯维加斯，缴纳了$140赌资.",p.color);
                     break;
                 case 12:
-                    addMoney(-50,p.id);
+                    game.addMoney(-50,p.id);
                     popup(p.position,2);
                     infoDisplay(p.name+" 到达免税店，花费$50购物.",p.color);
                     break;
                 case 15:
                     for(var i=0;i<pcount;i++){
                         if(player[i].id!=p.id)
-                            addMoney(-40,player[i].id);
+                            game.addMoney(-40,player[i].id);
                     }
-                    addMoney((pcount-1)*40,p.id);
+                    game.addMoney((pcount-1)*40,p.id);
                     popup(p.position,2);
                     infoDisplay(p.name+" 到达WTO，贸易频繁，资金流转不周，向其他每个玩家收取 $40 ,共获得 $"+(pcount-1)*40,p.color);
                     break;
                 case 20:
-                    addMoney(50,p.id);
+                    game.addMoney(50,p.id);
                     popup(p.position,2);
                     infoDisplay(p.name+" 到达免费停车场，捡到$50.",p.color);
                     break;
@@ -553,31 +587,48 @@ function land()
             //公司
             switch (p.position){
                 case 5:
-                    // square[5] = new Square("微软", "$200", "#FFFFFF", 200, 1);//1
+                    //微软 拥有者在建筑升至1级时免费
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id)
-                        console.log("MICROSOFT");
                     break;
                 case 25:
-                    // square[25] = new Square("ORACLE", "$200", "#FFFFFF", 200, 1);//1
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id)
-                        console.log("ORACLE");
+                    else if(s.owner==p.id){
+                        infoDisplay("作为ORACLE的拥有者，"+p.name+" 在之后的2回合内免交房租");
+                        round3 = 1;
+                    }
+
                     break;
                 case 33:
+                    //红十字 拥有者到达时获得一张免费出狱卡
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id)
-                        console.log("出狱卡1张");
+                    else if(s.owner==p.id){
+                        p.JailCard++;
+                        infoDisplay("作为红十字的拥有者 "+p.name+" 到达了红十字，获得了一张免费出狱卡");
+                    }
+                    break;
+                case 38:
+                    //白宫 拥有者可以向其他所有用户征收其资产的10%
+                    if(s.owner==-1)
+                        popup(p.position,1);
+                    else if(s.owner==p.id){
+                        var levy=0;
+                        for(var i=0;i<pcount;i++){
+                            if(i!=turn){
+                                var tax = parseInt(0.1*player[i].money);
+                                game.addMoney(-tax,player[i].id);
+                                levy = levy+tax;
+                            }
+                        }game.addMoney(levy,p.id);
+                        infoDisplay("作为白宫的拥有者 "+p.name+" 向其他所有用户征收了10%的个人所得税，共计：$"+levy);
+                    }
                     break;
                 case 44:
-                    // square[44] = new Square("IBM", "$200", "#FFFFFF", 200, 1);//1
+                    // IBM 拥有者可以强行购买0级地产
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id)
-                        console.log("IBM");
                     break;
             }
             break;
@@ -590,6 +641,16 @@ function land()
                     popup(p.position,2);
                     game.goToJail();
                     break;
+                case 7:
+                    // 公益基金", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    break;
+                case 17:
+                    // 机遇", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    break;
+                case 22:
+                    // 联合国", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    break;
+
             }
             break;
         case 13:
@@ -599,13 +660,13 @@ function land()
                 //无主 可以购买
                 popup(p.position,0);
             }else if(s.owner==p.id){
-                if (s.level==5){
-
-                }else
+                if (s.level<4)
                     levelUp(p.position);
             }else{
                 //支付租金
                 game.pay();
+                if(square[44].owner==p.id&&s.level==0)
+                    popup(p.position,4);
             }
             break;
     }
@@ -634,11 +695,12 @@ function endTurn()
             }else if(round2==0&&rate!=1){
                 rate=1;
                 infoDisplay("租金收取恢复正常");
+            }if(round3!=0){
+                round3--;
             }
         }
         doublecount = 0;
         $("#arrow"+(turn+1)).show();
-
 
     })
 }
@@ -657,8 +719,7 @@ function popup(position,type)
                 "<div><span>一级房租: $" + s.rent1 + "  </span>" +
                 "<span>二级房租: $" + s.rent2 + "</span></div>" +
                 "<div><span>三级房租: $" + s.rent3 + "  </span>" +
-                "<span>一级旅馆房租: $" + s.rent4 + "</span></div>" +
-                "<div><span>二级旅馆房租: $" + s.rent5 + "  </span>" +
+                "<span>旅馆房租: $" + s.rent4 + "</span></div>" +
                 "<span>升级费用: $" + s.houseprice + "</span></div>";
         }else if(type==1){
             document.getElementById("popuptext").innerHTML =
@@ -673,10 +734,21 @@ function popup(position,type)
             document.getElementById("popuptext").innerHTML =
                 "<h3>" + s.name + "</h3>" +
                 "<div>您是否愿意花$50保释自己</div>";
+        }else if(type==4){
+            document.getElementById("popuptext").innerHTML =
+                "<h3 style='color:" + s.color + "'>" + s.name + "</h3>" +
+                "<div><span>购买价格: $" + s.price + "  </span>" +
+                "<span>基础房租: $" + s.rent0 + "</span></div>" +
+                "<div><span>一级房租: $" + s.rent1 + "  </span>" +
+                "<span>二级房租: $" + s.rent2 + "</span></div>" +
+                "<div><span>三级房租: $" + s.rent3 + "  </span>" +
+                "<span>旅馆房租: $" + s.rent4 + "</span></div>" +
+                "<span>升级费用: $" + s.houseprice + "</span></div>" +
+                "<div>作为IBM的拥有者，您可以选择从对方手上强购该房产</div>";
         }
 
 
-        if(type!=2&&type!=3) {
+        if(type!=2&&type!=3&&type!=4) {
 
             document.getElementById("popuptext").innerHTML +=
                 "<div>" +
@@ -684,16 +756,8 @@ function popup(position,type)
                 "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >取消</button>" +
                 "</div>";
 
-            $("#popupno").on("click", function () {
-                $("#popupwrap").hide();
-
-                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
-                document.getElementById("cell" + position).style.zIndex = 0;
-                document.getElementById("cell" + position).style.position = "";
-                $("#popupbackground").fadeOut(400);
-            });
             $("#popupyes").on("click", function () {
-                buy(position, player[turn].id, type);
+                game.buy(position, player[turn].id, type);
                 $("#popupwrap").hide();
                 document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
                 document.getElementById("cell" + position).style.zIndex = 0;
@@ -707,14 +771,6 @@ function popup(position,type)
                 "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >确定</button>" +
                 "</div>";
 
-            $("#popupno").on("click", function () {
-                $("#popupwrap").hide();
-                document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
-                document.getElementById("cell" + position).style.zIndex = 0;
-                document.getElementById("cell" + position).style.position = "";
-                $("#popupbackground").fadeOut(400);
-            });
-
         }else if(type==3){
             document.getElementById("popuptext").innerHTML +=
                 "<div>" +
@@ -722,18 +778,35 @@ function popup(position,type)
                 "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >取消</button>" +
                 "</div>";
 
-            $("#popupno").on("click", function () {
+            $("#popupyes").on("click", function () {
+                player[turn].jail = false;
+                player[turn].jailroll = 0;
+                player[turn].position = 21;
+                updatePosition("20_5",21);
                 $("#popupwrap").hide();
-
                 document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
                 document.getElementById("cell" + position).style.zIndex = 0;
                 document.getElementById("cell" + position).style.position = "";
                 $("#popupbackground").fadeOut(400);
             });
+        }else if(type==4){
+            document.getElementById("popuptext").innerHTML +=
+                "<div>" +
+                "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"popupyes\">强购</button>" +
+                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"popupno\" >取消</button>" +
+                "</div>";
+
             $("#popupyes").on("click", function () {
-                player[turn].jail = false;
-                player[turn].jailroll = 0;
-                updatePosition(100,100);
+                var oldowner = square[position].owner;
+                square[position].owner = player[turn].id;
+                document.getElementById("owenerholder" + position).style.border = "2px solid " + player[turn].color;
+                document.getElementById("owenerholder" + position).innerText = "Level 0";
+                game.addMoney(-square[position].price, player[turn].id);
+                game.addMoney(square[position].price, oldowner);
+                infoDisplay("IBM的拥有者 "+player[turn].name + " 花费了 $" + square[position].price +
+                    " 从 "+player[getIndexbyId(oldowner)].name+" 手上强购了房产：" + square[position].name, player[turn].color);
+
+
                 $("#popupwrap").hide();
                 document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
                 document.getElementById("cell" + position).style.zIndex = 0;
@@ -742,7 +815,14 @@ function popup(position,type)
             });
         }
 
+        $("#popupno").on("click", function () {
+            $("#popupwrap").hide();
 
+            document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
+            document.getElementById("cell" + position).style.zIndex = 0;
+            document.getElementById("cell" + position).style.position = "";
+            $("#popupbackground").fadeOut(400);
+        });
 
         // Show using animation.
         $("#popupbackground").fadeIn(400, function () {
@@ -764,30 +844,47 @@ function levelUp(position)
 
     document.getElementById("popuptext").innerHTML =
         "<h4 style='color:"+s.color+"'>"+s.name+"</h4>" +
-        "<div><span>当前等级: $"+s.level+"  </span>" +
+        "<div><span>当前等级: "+s.level+"  </span>" +
         "<span>基础房租: $"+s.rent0+"</span></div>" +
         "<div><span>一级房租: $"+s.rent1+"  </span>" +
         "<span>二级房租: $"+s.rent2+"</span></div>" +
         "<div><span>三级房租: $"+s.rent3+"  </span>" +
-        "<span>一级旅馆房租: $"+s.rent4+"</span></div>" +
-        "<div><span>二级旅馆房租: $"+s.rent5+"  </span>" +
+        "<span>旅馆房租: $"+s.rent4+"</span></div>" +
         "<span>升级费用: $"+s.houseprice+"</span></div>";
 
-    document.getElementById("popuptext").innerHTML +=
-        "<div>" +
-        "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">升级</button>" +
-        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
-        "</div>";
+    if(player[turn].id==square[5].owner&&s.level==0){
+        document.getElementById("popuptext").innerHTML +=
+            "<div>" +
+            "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">免费升级</button>" +
+            "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+            "</div>";
 
-    $("#levelupnp").on("click", function() {
-        $("#popupwrap").hide();
-        $("#popupbackground").fadeOut(400);
-    });
-    $("#levelupyes").on("click", function() {
-        s.level++;
-        addMoney(s.houseprice,player[turn].id);
-        document.getElementById("owenerholder"+position).innerText = "Level "+s.level;
-        infoDisplay(player[turn].name+" 花费了 $"+s.houseprice+" 把 "+s.name+" 升到了 "+s.level+" 级 ",player[turn].color);
+        $("#levelupyes").on("click", function () {
+            s.level++;
+            document.getElementById("owenerholder" + position).innerText = "Level 1";
+            infoDisplay("微软的拥有者 "+player[turn].name + " 免费把 " + s.name + " 升到了 1 级 ");
+            $("#popupwrap").hide();
+            $("#popupbackground").fadeOut(400);
+        });
+
+    }else {
+        document.getElementById("popuptext").innerHTML +=
+            "<div>" +
+            "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">升级</button>" +
+            "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+            "</div>";
+
+        $("#levelupyes").on("click", function () {
+            s.level++;
+            game.addMoney(s.houseprice, player[turn].id);
+            document.getElementById("owenerholder" + position).innerText = "Level " + s.level;
+            infoDisplay(player[turn].name + " 花费了 $" + s.houseprice + " 把 " + s.name + " 升到了 " + s.level + " 级 ", player[turn].color);
+            $("#popupwrap").hide();
+            $("#popupbackground").fadeOut(400);
+        });
+    }
+
+    $("#levelupno").on("click", function () {
         $("#popupwrap").hide();
         $("#popupbackground").fadeOut(400);
     });
@@ -817,26 +914,28 @@ function bankrupt() {
     player.splice(turn,1);pcount--;
     updatePosition(100,100);
 
-    $("#endTurn").prop('disabled', true);
-    $("#rollbtn").prop('disabled', false);
-    if (turn==pcount){
-        turn = 0;
-        if(round!=0){
-            round--;
-        }else if(round==0&&dir==-1){
-            dir=1;
-            infoDisplay("行走方向恢复为顺时针");
-        }if(round2!=0){
-            round2--;
-        }else if(round2==0&&rate!=1){
-            rate=1;
-            infoDisplay("租金收取恢复正常");
+
+        $("#endTurn").prop('disabled', true);
+        $("#rollbtn").prop('disabled', false);
+        if (turn == pcount) {
+            turn = 0;
+            if (round != 0) {
+                round--;
+            } else if (round == 0 && dir == -1) {
+                dir = 1;
+                infoDisplay("行走方向恢复为顺时针");
+            }
+            if (round2 != 0) {
+                round2--;
+            } else if (round2 == 0 && rate != 1) {
+                rate = 1;
+                infoDisplay("租金收取恢复正常");
+            }
         }
-    }
-    doublecount = 0;
-    $("#arrow"+(player[turn].id+1)).show();
-    if(pcount==1)
-        game.over();
+        doublecount = 0;
+        $("#arrow" + (player[turn].id + 1)).show();
+        if (pcount == 1)
+            game.over();
 }
 
 
@@ -1014,23 +1113,7 @@ function showdeed(property) {
     }
 }
 
-function addMoney(num,id) {
-    player[getIndexbyId(id)].money += num;
-}
 
-
-function buy(position,id,type) {
-    square[position].owner = id;
-    document.getElementById("owenerholder" + position).style.border = "2px solid " + player[getIndexbyId(id)].color;
-    if(type==0) {
-        document.getElementById("owenerholder" + position).innerText = "Level 0";
-    }else if(type==1){
-        document.getElementById("owenerholder" + position).innerText = player[turn].name;
-    }
-        addMoney(-square[position].price, player[turn].id);
-        infoDisplay(player[turn].name + " 花费了 $" + square[position].price + " 购买了房产：" + square[position].name, player[turn].color);
-
-}
 
 
 
