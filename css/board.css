@@ -63,7 +63,6 @@ td {
 	padding-top: 20px;
 	z-index: 14;
 	position: relative;
-	down:-200px;
 	cursor: default;
 	-webkit-user-select: none;
 	user-select: none;
@@ -490,6 +489,5 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 	top: -16px;
 	cursor: move;
 }
-
 
 

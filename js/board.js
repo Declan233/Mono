@@ -310,13 +310,7 @@ function Game() {
         return Rent;
     }
 
-    this.payFine = function () {
-        game.addMoney(-50,player[turn].id);
-    }
-
     this.goToJail = function (){
-
-
         var p = player[turn];
         var start = p.position;
         var end = "20_5";
@@ -365,13 +359,34 @@ function Game() {
         }else if(type==1){
             document.getElementById("owenerholder" + position).innerText = player[turn].name;
         }
-        game.addMoney(-square[position].price, player[turn].id);
-        infoDisplay(player[turn].name + " 花费了 $" + square[position].price + " 购买了房产：" + square[position].name, player[turn].color);
+        if(type==5){
+            game.addMoney(-50, player[turn].id);
+            infoDisplay(player[turn].name + " 花费了 $50 购买了房产：" + square[position].name, player[turn].color);
+        }else {
+            game.addMoney(-square[position].price, player[turn].id);
+            infoDisplay(player[turn].name + " 花费了 $" + square[position].price + " 购买了房产：" + square[position].name, player[turn].color);
+        }
 
     }
 
     this.addMoney = function (num,id) {
         player[getIndexbyId(id)].money += num;
+    }
+
+    this.pickCard = function () {
+        var index = Math.floor(Math.random()*30);
+        var card = chanceCards[index];
+        $("#cc1").trigger("click");
+        var cc2 = document.getElementById("cc2");
+        var cccontent = document.getElementById("cccontent");
+        cc2.innerHTML = "运气卡 "+(index+1);
+        cccontent.innerHTML = card.text;
+        infoDisplay(player[turn].name+" 抽到运气卡："+card.text);
+        card.action(player[turn]);
+
+        setTimeout(function () {
+            $("#cc2").trigger("click");
+        },holdtime*3);
     }
 
 
@@ -432,7 +447,7 @@ function roll() {
             doublecount = 0;
             infoDisplay(p.name + " 掷出了双数，离开了监狱.");
         }else {//不同数
-            if (p.jailroll === 3) {//连续三回合可交50罚款出狱
+            if (p.jailroll >= 3) {//连续三回合可交50罚款出狱
                 popup(21,3);
                 return;
             }else {//继续监狱生活
@@ -591,6 +606,15 @@ function land()
                     if(s.owner==-1)
                         popup(p.position,1);
                     break;
+                case 17:
+                    //红十字 拥有者到达时获得一张免费出狱卡
+                    if(s.owner==-1)
+                        popup(p.position,1);
+                    else if(s.owner==p.id){
+                        p.JailCard++;
+                        infoDisplay("作为红十字的拥有者 "+p.name+" 到达了红十字，获得了一张免费出狱卡");
+                    }
+                    break;
                 case 25:
                     if(s.owner==-1)
                         popup(p.position,1);
@@ -600,17 +624,8 @@ function land()
                     }
 
                     break;
-                case 33:
-                    //红十字 拥有者到达时获得一张免费出狱卡
-                    if(s.owner==-1)
-                        popup(p.position,1);
-                    else if(s.owner==p.id){
-                        p.JailCard++;
-                        infoDisplay("作为红十字的拥有者 "+p.name+" 到达了红十字，获得了一张免费出狱卡");
-                    }
-                    break;
                 case 38:
-                    //白宫 拥有者可以向其他所有用户征收其资产的10%
+                    //苹果 拥有者可以向其他所有用户征收其资产的10%
                     if(s.owner==-1)
                         popup(p.position,1);
                     else if(s.owner==p.id){
@@ -622,7 +637,7 @@ function land()
                                 levy = levy+tax;
                             }
                         }game.addMoney(levy,p.id);
-                        infoDisplay("作为白宫的拥有者 "+p.name+" 向其他所有用户征收了10%的个人所得税，共计：$"+levy);
+                        infoDisplay("作为苹果的拥有者 "+p.name+" 向其他所有用户征收了10%的个人所得税，共计：$"+levy);
                     }
                     break;
                 case 44:
@@ -643,17 +658,21 @@ function land()
                     break;
                 case 7:
                     // 公益基金", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
-                    break;
-                case 17:
-                    // 机遇", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    game.pickCard();
                     break;
                 case 22:
                     // 联合国", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    game.pickCard();
                     break;
-
+                case 33:
+                    // 机遇", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    game.pickCard();
+                    break;
+                case 47:
+                    // 迪拜", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
+                    game.pickCard();
+                    break;
             }
-            break;
-        case 13:
             break;
         default:
             if(s.owner==-1){
@@ -745,10 +764,16 @@ function popup(position,type)
                 "<span>旅馆房租: $" + s.rent4 + "</span></div>" +
                 "<span>升级费用: $" + s.houseprice + "</span></div>" +
                 "<div>作为IBM的拥有者，您可以选择从对方手上强购该房产</div>";
+        } else if(type==5){
+            document.getElementById("popuptext").innerHTML =
+                "<h3>" + s.name + "</h3>" +
+                "<div>原购买价格: $" + s.price + "  </div>" +
+                "<div>说明: " + s.pricetext + "</div>" +
+                "<div>您可以选择花费 $50 购得该公司</div>";
         }
 
 
-        if(type!=2&&type!=3&&type!=4) {
+        if(type==0||type==1||type==5) {
 
             document.getElementById("popuptext").innerHTML +=
                 "<div>" +
@@ -805,8 +830,6 @@ function popup(position,type)
                 game.addMoney(square[position].price, oldowner);
                 infoDisplay("IBM的拥有者 "+player[turn].name + " 花费了 $" + square[position].price +
                     " 从 "+player[getIndexbyId(oldowner)].name+" 手上强购了房产：" + square[position].name, player[turn].color);
-
-
                 $("#popupwrap").hide();
                 document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
                 document.getElementById("cell" + position).style.zIndex = 0;
@@ -1112,9 +1135,6 @@ function showdeed(property) {
         }
     }
 }
-
-
-
 
 
 
