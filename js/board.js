@@ -356,7 +356,7 @@ function Game() {
         document.getElementById("owenerholder" + position).style.border = "2px solid " + player[getIndexbyId(id)].color;
         if(type==0) {
             document.getElementById("owenerholder" + position).innerText = "Level 0";
-        }else if(type==1){
+        }else if(type==1||type==5){
             document.getElementById("owenerholder" + position).innerText = player[turn].name;
         }
         if(type==5){
@@ -375,6 +375,7 @@ function Game() {
 
     this.pickCard = function () {
         var index = Math.floor(Math.random()*30);
+        // var index = 5;
         var card = chanceCards[index];
         $("#cc1").trigger("click");
         var cc2 = document.getElementById("cc2");
@@ -807,7 +808,9 @@ function popup(position,type)
                 player[turn].jail = false;
                 player[turn].jailroll = 0;
                 player[turn].position = 21;
+                $("#endTurn").prop('disabled', false);
                 updatePosition("20_5",21);
+                infoDisplay(player[turn]+"花费了 $50 保释了自己");
                 $("#popupwrap").hide();
                 document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
                 document.getElementById("cell" + position).style.zIndex = 0;
@@ -1116,7 +1119,6 @@ function showdeed(property) {
             document.getElementById("deed-rent2").textContent = sq.rent2;
             document.getElementById("deed-rent3").textContent = sq.rent3;
             document.getElementById("deed-rent4").textContent = sq.rent4;
-            document.getElementById("deed-rent5").textContent = sq.rent5;
             document.getElementById("deed-mortgage").textContent = (sq.price / 2);
             document.getElementById("deed-houseprice").textContent = sq.houseprice;
             document.getElementById("deed-hotelprice").textContent = sq.houseprice;

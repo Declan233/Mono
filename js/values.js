@@ -163,6 +163,7 @@ chanceCards[4] = new Card("回退三格.", function(p) {
 	p.position -= (dir)*3;
 	end = p.position;
 	updatePosition(start,end);
+	setTimeout(land,holdtime);
 });
 chanceCards[5] = new Card("前进到最近的一个公司. 如果无主, 您可以花费$50购得. 如果有主, 支付给主人$120.", function(p) {
 	switch (p.position){
@@ -203,11 +204,12 @@ chanceCards[5] = new Card("前进到最近的一个公司. 如果无主, 您可�
             }
             break;
 	}
-	setTimeout(holdtime,dete);
+	setTimeout(dete,holdtime);
 	function dete() {
+	    console.log(square[p.position]);
 		if(square[p.position].owner==-1){
             popup(p.position,5);
-		}else if(square[p.position].owner=p.id)
+		}else if(square[p.position].owner==p.id)
 			land();
 		else{
 			game.addMoney(-120,p.id);
@@ -235,7 +237,7 @@ chanceCards[9] = new Card("前往科隆大教堂. 如果经过起点，获得$50
         infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
     }
     updatePosition(start,31);
-    land();
+    setTimeout(land,holdtime);
 });
 chanceCards[10] = new Card("前往免费停车场. 如果经过起点，获得$500.", function(p) {
     var start = p.position;
@@ -245,7 +247,7 @@ chanceCards[10] = new Card("前往免费停车场. 如果经过起点，获得$5
         infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
     }
     updatePosition(start,20);
-    land();
+    setTimeout(land,holdtime);
 });
 chanceCards[11] = new Card("遇到旁氏骗局，$100养老金打水飘了.", function(p) {
     game.addMoney(-100,p.id);
@@ -342,11 +344,11 @@ chanceCards[29] = new Card("回到2号门(获得$500启动基金).", function(p)
 
 
 function utiltext() {
-    return '&nbsp;&nbsp;&nbsp;&nbsp;如果公司有主，支付2倍租金.<br /><br />&nbsp;&nbsp;&nbsp;';
+    return '';
 }
 
 
 function transtext() {
-    return '<div style="font-size: 14px; line-height: 1.5;">Rent<span style="float: right;">$25.</span><br />If 2 Railroads are owned<span style="float: right;">50.</span><br />If 3 &nbsp; &nbsp; " &nbsp; &nbsp; " &nbsp; &nbsp; "<span style="float: right;">100.</span><br />If 4 &nbsp; &nbsp; " &nbsp; &nbsp; " &nbsp; &nbsp; "<span style="float: right;">200.</span></div>';
+    return '';
 }
 
