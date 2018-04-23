@@ -41,7 +41,6 @@ app.controller("moneybar",function ($scope,$interval)
 
 })
 
-
 /**
  * 棋盘初始化
  */
