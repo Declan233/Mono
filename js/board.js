@@ -18,7 +18,6 @@ window.onload = function() {
 
 var hh = sessionStorage.getItem("playinfo");//获取键为allJson的字符串
 var playersinfo = JSON.parse(hh);//将字符串抓换成对象
-
 var game;
 var player = [];
 var pcount = parseInt(playersinfo.pcount,10);
@@ -26,10 +25,28 @@ var turn = 0, doublecount = 0;
 var dir = 1, rate=1, round=0 ,round2=0, round3=0;
 var holdtime = 1200;
 
+
+
+var app = angular.module('myApp', []);
+app.controller("moneybar",function ($scope,$interval)
+{
+    for (var i = 0; i < pcount; i++)
+        player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token,i);
+
+    $scope.ps = player;
+
+    $interval(function(){
+        $scope.ps = player;
+    },2000);
+
+})
+
+
 /**
  * 棋盘初始化
  */
-function initBoard() {
+function initBoard()
+{
     var enlargeWrap = document.body.appendChild(document.createElement("div"));
 
     enlargeWrap.id = "enlarge-wrap";
@@ -74,11 +91,11 @@ function initBoard() {
     $("#arrow1").show();
 }
 
-
 /**
  * 玩家初始化
  */
-function initPlayers(){
+function initPlayers()
+{
     var holder = document.getElementById("holder0");
 
     console.log(player);
@@ -91,31 +108,9 @@ function initPlayers(){
     // play();
 }
 
-
-
-
-
-var app = angular.module('myApp', []);
-app.controller("moneybar",function ($scope,$interval)
-{
-    for (var i = 0; i < pcount; i++)
-        player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token,i);
-
-    $scope.ps = player;
-
-    $interval(function(){
-        $scope.ps = player;
-    },2000);
-
-})
-
-
-
-
-
-
 //显示当前房产结果
-function showStats(){
+function showStats()
+{
     var HTML, sq, p;
     var mortgagetext,
         housetext;
@@ -134,51 +129,43 @@ function showStats(){
         for (var i = 0; i < 52; i++) {
             sq = square[i];
 
-            // if (sq.owner == x) {
-            //     mortgagetext = "",
-            //         housetext = "";
-            //
-            //     if (sq.mortgage) {
-            //         mortgagetext = "title='Mortgaged' style='color: grey;'";
-            //     }
-            //
-            //     if (!write) {
-            //         write = true;
-            //         HTML += "<table>";
-            //     }
-            //
-            //     if (sq.house == 5) {
-            //         housetext += "<span style='float: right; font-weight: bold;'>1&nbsp;x&nbsp;<img src='images/hotel.png' alt='' title='Hotel' class='hotel' style='float: none;' /></span>";
-            //     } else if (sq.house > 0 && sq.house < 5) {
-            //         housetext += "<span style='float: right; font-weight: bold;'>" + sq.house + "&nbsp;x&nbsp;<img src='images/house.png' alt='' title='House' class='house' style='float: none;' /></span>";
-            //     }
-            //
-            //     HTML += "<tr><td class='statscellcolor' style='background: " + sq.color + ";";
-            //
-            //     if (sq.groupNumber == 1 || sq.groupNumber == 2) {
-            //         HTML += " border: 1px solid grey;";
-            //     }
-            //
-            //     HTML += "' onmouseover='showdeed(" + i + ");' onmouseout='hidedeed();'></td><td class='statscellname' " + mortgagetext + ">" + sq.name + housetext + "</td></tr>";
-            // }
-        }
+            if (sq.owner == p.id) {
+                mortgagetext = "",
+                    housetext = "";
 
-        // if (p.communityChestJailCard) {
-        //     if (!write) {
-        //         write = true;
-        //         HTML += "<table>";
-        //     }
-        //     HTML += "<tr><td class='statscellcolor'></td><td class='statscellname'>Get Out of Jail Free Card</td></tr>";
-        //
-        //  }
-        // if (p.chanceJailCard) {
-        //     if (!write) {
-        //         write = true;
-        //         HTML += "<table>";
-        //     }
-        //     HTML += "<tr><td class='statscellcolor'></td><td class='statscellname'>Get Out of Jail Free Card</td></tr>";
-        //
-        // }
+                if (sq.mortgage) {
+                    mortgagetext = "title='Mortgaged' style='color: grey;'";
+                }
+
+                if (!write) {
+                    write = true;
+                    HTML += "<table>";
+                }
+
+                if (sq.level == 5) {
+                    housetext += "<span style='float: right; font-weight: bold;'>1&nbsp;x&nbsp;<img src='images/hotel.png' alt='' title='Hotel' class='hotel' style='float: none;' /></span>";
+                } else if (sq.house > 0 && sq.house < 5) {
+                    housetext += "<span style='float: right; font-weight: bold;'>" + sq.house + "&nbsp;x&nbsp;<img src='images/house.png' alt='' title='House' class='house' style='float: none;' /></span>";
+                }
+
+                HTML += "<tr><td class='statscellcolor' style='background: " + sq.color + ";";
+
+                if (sq.groupNumber == 1 || sq.groupNumber == 2) {
+                    HTML += " border: 1px solid grey;";
+                }
+
+                HTML += "' onmouseover='showdeed(" + i + ");' onmouseout='hidedeed();'></td><td class='statscellname' " + mortgagetext + ">" + sq.name + housetext + "</td>" +
+                    "<td class='statscelllevel'>"+sq.level+" 级</td></tr>";
+            }
+        }
+        if (p.JailCard) {
+            if (!write) {
+                write = true;
+                HTML += "<table>";
+            }
+            HTML += "<tr><td class='statscellcolor'></td><td class='statscellname'>出狱卡</td><td class='statscelllevel'>"+p.JailCard+"张</td></tr>";
+
+        }
 
         if (!write) {
             HTML += p.name + " 没有任何财产。";
@@ -201,11 +188,59 @@ function showStats(){
     });
 }
 
+function trade() {
+    
+}
+
+function mortgage()
+{
+    var p = player[turn];
+
+    document.getElementById("popup").style.width = "300px";
+    document.getElementById("popup").style.top = "0px";
+    document.getElementById("popup").style.left = "0px";
+
+    document.getElementById("popuptext").innerHTML = "<h4>"+p.name+"可抵押的地产</h4>";
+    for(var i=0;i<square.length;i++){
+        if(p.id==square[i].owner){
+            document.getElementById("popuptext").innerHTML += "<label class=\"checkbox-inline\">" +
+                "<input type=\"checkbox\" id=\"inlineCheckbox1\" value='"+i+"'>"+square[i].name+
+                "&nbsp;&nbsp;&nbsp;抵押价值 $"+(square[i].price/2+square[i].level*(square[i].houseprice/2))+"</label>";
+        }
+    }
+
+
+    document.getElementById("popuptext").innerHTML +=
+        "<br><div>" +
+        "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">确定抵押</button>" +
+        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+        "</div>";
+
+    $("#levelupyes").on("click", function () {
+
+        $("#popupwrap").hide();
+        $("#popupbackground").fadeOut(400);
+    });
+
+    $("#levelupno").on("click", function () {
+
+        $("#popupwrap").hide();
+        $("#popupbackground").fadeOut(400);
+    });
+
+
+    // Show using animation.
+    $("#popupbackground").fadeIn(400, function() {
+        $("#popupwrap").show();
+    });
+}
+
 /**
  * 游戏
  * @constructor
  */
-function Game() {
+function Game()
+{
     var die1;//骰子1
     var die2;//骰子2
     var Rent;
@@ -393,12 +428,8 @@ function Game() {
 
 }
 
-
-
-
-
-
-function roll() {
+function roll()
+{
     var p = player[turn];
 
     game.rollDice();
@@ -418,7 +449,7 @@ function roll() {
                 end = p.position;
                 game.addMoney(500,p.id);
                 infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
-            }else if(p.position < 0&&dir==-1){
+            }else if(p.position <= 0&&dir==-1){
                 p.position += 52;
                 end = p.position;
                 game.addMoney(500,p.id);
@@ -477,8 +508,6 @@ function roll() {
 
 }
 
-
-
 function updatePosition(start,end)
 {
     var sq;
@@ -536,7 +565,6 @@ function updatePosition(start,end)
 
 }
 
-
 function infoDisplay(msg,color)
 {
     var disarea = document.getElementById("displayInfo");
@@ -548,10 +576,6 @@ function infoDisplay(msg,color)
 
     $("#displayInfo").scrollTop($("#displayInfo").prop("scrollHeight"));
 }
-
-
-
-
 
 function land()
 {
@@ -693,8 +717,6 @@ function land()
 
 }
 
-
-
 function endTurn()
 {
     //当结束回合按钮被按下
@@ -810,7 +832,8 @@ function popup(position,type)
                 player[turn].position = 21;
                 $("#endTurn").prop('disabled', false);
                 updatePosition("20_5",21);
-                infoDisplay(player[turn]+"花费了 $50 保释了自己");
+                game.addMoney(-50,player[turn].id);
+                infoDisplay(player[turn].name+"花费了 $50 保释了自己");
                 $("#popupwrap").hide();
                 document.getElementById("cell" + position).style.backgroundColor = "#ffffff";
                 document.getElementById("cell" + position).style.zIndex = 0;
@@ -923,9 +946,8 @@ function levelUp(position)
 
 }
 
-
-
-function bankrupt() {
+function bankrupt()
+{
     var s;
     var id = player[turn].id;
     for(var i=0;i<52;i++){
@@ -964,9 +986,8 @@ function bankrupt() {
             game.over();
 }
 
-
-
-function mouse(i) {
+function mouse(i)
+{
     if (i=="20_5"){
         $("#jail").on("mousemove", function(e) {
             // console.log(i);
@@ -1005,7 +1026,8 @@ function mouse(i) {
     }
 }
 
-function deed() {
+function deed()
+{
 
     var s;
 
@@ -1095,7 +1117,8 @@ function deed() {
     
 }
 
-function showdeed(property) {
+function showdeed(property)
+{
     var sq = square[property];
     $("#deed").show();
 
@@ -1114,34 +1137,37 @@ function showdeed(property) {
             $("#deed-normal").show();
             document.getElementById("deed-header").style.backgroundColor = sq.color;
             document.getElementById("deed-name").textContent = sq.name;
-            document.getElementById("deed-baserent").textContent = sq.baserent;
+            document.getElementById("deed-baserent").textContent = sq.rent0;
             document.getElementById("deed-rent1").textContent = sq.rent1;
             document.getElementById("deed-rent2").textContent = sq.rent2;
             document.getElementById("deed-rent3").textContent = sq.rent3;
             document.getElementById("deed-rent4").textContent = sq.rent4;
-            document.getElementById("deed-mortgage").textContent = (sq.price / 2);
+            document.getElementById("deed-price").textContent = sq.price;
+            document.getElementById("deed-mortgage").textContent = sq.price/2 + sq.level*(sq.houseprice/2);
             document.getElementById("deed-houseprice").textContent = sq.houseprice;
-            document.getElementById("deed-hotelprice").textContent = sq.houseprice;
 
         } else if (sq.groupNumber == 2) {
             $("#deed-special").show();
             document.getElementById("deed-special-name").textContent = sq.name;
-            document.getElementById("deed-special-text").innerHTML = utiltext();
+            document.getElementById("deed-special-text").innerHTML = sq.pricetext;
             document.getElementById("deed-special-mortgage").textContent = (sq.price / 2);
 
         } else if (sq.groupNumber == 1) {
             $("#deed-special").show();
             document.getElementById("deed-special-name").textContent = sq.name;
-            document.getElementById("deed-special-text").innerHTML = transtext();
+            document.getElementById("deed-special-text").innerHTML = sq.pricetext;
             document.getElementById("deed-special-mortgage").textContent = (sq.price / 2);
         }
     }
 }
 
+function hidedeed()
+{
+    $("#deed").hide();
+}
 
-
-
-function getIndexbyId(id) {
+function getIndexbyId(id)
+{
     for (var i=0;i<pcount;i++)
         if(player[i].id == id)
             return i;

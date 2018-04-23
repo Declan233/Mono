@@ -192,17 +192,21 @@ td {
 	cursor: move;
 }
 .statscellcolor {
+	margin-top: 5px;
 	padding: 0px;
-	width: 22px;
+	width: 20px;
 	height: 20px;
 	border: none;
 }
 .statscellname {
 	height: 20px;
+	width: 72%;
 	border: none;
 	cursor: default;
 	text-align: left;
-	min-width: 172px;
+}
+.statscelllevel{
+	float: right;
 }
 
 .statsplayername {
@@ -491,3 +495,6 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 }
 
 
+#buttongroup{
+	margin-top: 25px;
+}

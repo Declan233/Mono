@@ -342,13 +342,3 @@ chanceCards[29] = new Card("回到2号门(获得$500启动基金).", function(p)
 
 
 
-
-function utiltext() {
-    return '';
-}
-
-
-function transtext() {
-    return '';
-}
-
