@@ -19,8 +19,6 @@ function Square(name, pricetext, color, price, groupNumber, rent0, rent1, rent2,
 	this.color = color;
 	this.owner = -1;
 	this.mortgage = false;
-	this.house = 0;
-	this.hotel = 0;
 	this.groupNumber = groupNumber || 0;
 	this.price = (price || 0);
 	this.rent0 = (rent0 || 0);
@@ -114,7 +112,7 @@ square[34] = new Square("国会大厦", "$320", "#008000", 320, 9, 78, 150, 450,
 square[35] = new Square("入狱", "发现作弊行为，送入监狱.", "#FFFFFF", 0, 2);//2
 square[36] = new Square("香港", "所有房产租金连续三回合提升10%", "#FFFFFF", 0, 0);//0
 square[37] = new Square("黑天鹅堡", "$350", "#0000FF", 350, 10, 85, 175, 500, 1100, 1300);//10
-square[38] = new Square("苹果公司", "拥有者可以向其他所有用户征收其资产的10%", "#FFFFFF", 0, 1);//1
+square[38] = new Square("苹果公司", "拥有者可以向其他所有用户征收其资产的10%", "#FFFFFF", 200, 1);//1
 square[39] = new Square("伦敦塔桥", "$400", "#0000FF", 400, 10, 100, 200, 600, 1000, 1300);//10
 square[40] = new Square("亚特兰大", "$200", "#0000FF", 200, 10, 60, 100, 300, 750, 925);//10
 square[41] = new Square("乾清宫", "$250", "#00f08F", 250, 11, 100, 200, 400, 800, 1200);//11

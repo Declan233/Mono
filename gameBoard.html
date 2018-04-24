@@ -83,9 +83,9 @@
 					</div>
 
 					<div id="buttongroup" class="btn-group-vertical" role="group" aria-label="...">
-						<button type="button" class="btn btn-primary" onclick="bankrupt()">认输</button>
+						<button type="button" class="btn btn-danger" onclick="bankrupt()">认输</button>
 						<button type="button" class="btn btn-success" onclick="trade()">交易</button>
-						<button type="button" class="btn btn-success" onclick="mortgage()">抵押</button>
+						<button type="button" class="btn btn-primary" id="mortgagebtn" onclick="mortgage()">抵押</button>
 						<button type="button" class="btn btn-info" id="viewstats" onclick="showStats()" title="点击将弹出一个对话框显示每个玩家的资产情况.">房产统计</button>
 
 					</div>
@@ -215,6 +215,8 @@
 
 
 
+
+
 	<div id="deed">
 		<div id="deed-normal" style="display: none;">
 			<div id="deed-header">
@@ -258,9 +260,9 @@
 			<div id="deed-mortgaged-name"></div>
 			<p>&bull;</p>
 			<div>已抵押</div>
-			<div> for $<span id="deed-mortgaged-mortgage">80</span></div>
+			<div> 获得 $<span id="deed-mortgaged-mortgage">80</span></div>
 			<p>&bull;</p>
-			<div style="font-style: italic; font-size: 13px; margin: 10px;">Card must be turned this side up if property is mortgaged</div>
+			<div style="font-style: italic; font-size: 13px; margin: 10px;">想要赎回被抵押的地产需要付给银行 100% 的赎金和 10% 的利息</div>
 		</div>
 
 		<div id="deed-special">

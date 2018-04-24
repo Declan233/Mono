@@ -441,7 +441,7 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 
 
 #popup {
-	width: 300px;
+	/*width: 300px;*/
 	min-width: 300px;
 	font-family: Arial, sans-serif;
 	font-size: 14px;
@@ -497,4 +497,16 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 
 #buttongroup{
 	margin-top: 25px;
+}
+
+
+
+.mbtn{
+	padding-right: 6px;
+}
+.mname{
+	width: 50%;
+}
+.mvalue{
+	width:20%;
 }
