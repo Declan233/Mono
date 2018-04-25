@@ -327,7 +327,7 @@ chanceCards[28] = new Card("生日快乐.每位玩家给您$10作为生日礼物
 		if(player[i].id!=p.id)
             game.addMoney(-10,player[i].id);
 	}
-    game.addMoney(10*pcount,p.id);
+    game.addMoney(10*(pcount-1),p.id);
 });
 chanceCards[29] = new Card("回到2号门(获得$500启动基金).", function(p) {
 	var start = p.position;

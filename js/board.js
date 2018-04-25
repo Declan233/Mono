@@ -183,7 +183,74 @@ function showStats()
 }
 
 function trade() {
-    
+    var p = player[turn];
+
+    document.getElementById("popup").style.width = "300px";
+    document.getElementById("popup").style.top = "0px";
+    document.getElementById("popup").style.left = "0px";
+    var s=0,b=0;
+    var html;
+    var htmls = "<table align='center'><tr><td colspan='2'><input id='tradee' type='text' placeholder='输入出售价'/></td><td>" +
+        "<div>" +
+        "<select name=\"selectAge\" id=\"selectplayer\">";
+    for (var i=0;i<pcount;i++){
+        if(player[i].id!=p.id){
+            htmls += "<option value='"+player[i].id+"'>"+player[i].name+"</option>";
+        }
+    }
+    htmls += "</select></div></td><td>&nbsp;&nbsp;等级</td></tr>";
+    var htmlb = "<table align='center'><tr><td colspan='3'><input id='tradee' type='text' placeholder='输入购买价'/></td><td>&nbsp;&nbsp;拥有者&nbsp;&nbsp;</td><td>&nbsp;&nbsp;等级</td></tr>";
+
+    document.getElementById("popuptext").innerHTML = "<h4>交易</h4>"+
+        "<ul class=\"nav nav-tabs\" role=\"tablist\">" +
+            "<li role=\"presentation\" class=\"active\"><a href=\"#sell\" role=\"tab\" data-toggle=\"tab\">出售</a></li>" +
+            "<li role=\"presentation\"><a href=\"#buy\" role=\"tab\" data-toggle=\"tab\">购买</a></li>" +
+        "</ul>";
+
+    for(var i=0;i<square.length;i++){
+        if(square[i].owner==p.id&&!square[i].mortgage){
+            s += 1;
+            console.log("sell:"+s);
+            htmls += "<tr><td class='mbtn'><input type=\"radio\" name=\"radiobutton\" /></td>" +
+                "<td class='statscellcolor' style='background: " + square[i].color+";border: 1px solid grey;' onmouseover='showdeed("+i+");' onmouseout='hidedeed();'></td>"+
+                "<td class='mname2'>"+square[i].name+"</td><td>"+square[i].level+"级</td></tr>";
+        }else if(square[i].owner!=-1&&square[i].owner!=p.id) {
+            b += 1;
+            console.log("buy:"+b);
+            htmlb += "<tr><td class='mbtn'><input type=\"radio\" name=\"radiobutton\" /></td>" +
+                "<td class='statscellcolor' style='background: " + square[i].color + ";border: 1px solid grey;' onmouseover='showdeed(" + i + ");' onmouseout='hidedeed();'></td>" +
+                "<td class='mname2'>" + square[i].name + "</td><td>"+player[getIndexbyId(square[i].owner)].name+"</td><td>"+square[i].level+"级</td></tr>";
+        }
+    }
+
+    htmls += "</table>";
+    htmlb += "</table>";
+
+// <input id='tradee' type='text' placeholder='输入交易额'/>
+
+    html = "<div class=\"tab-content\">";
+    html += "<div role=\"tabpanel\" class=\"active tab-pane\" id=\"sell\">"+htmls+"</div>";
+    html += "<div role=\"tabpanel\" class=\"tab-pane\" id=\"buy\">"+htmlb+"</div></div>";
+
+
+
+    document.getElementById("popuptext").innerHTML += html;
+    document.getElementById("popuptext").innerHTML +=
+        "<br><div>" +
+        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+        "</div>";
+
+
+    $("#levelupno").on("click", function () {
+
+        $("#popupwrap").hide();
+        $("#popupbackground").fadeOut(400);
+    });
+
+    // Show using animation.
+    $("#popupbackground").fadeIn(400, function() {
+        $("#popupwrap").show();
+    });
 }
 
 function mortgage()
@@ -204,7 +271,7 @@ function mortgage()
                 "<td class='mname'>"+square[i].name+
                 "</td><td class='mvalue'>抵押 $"+parseInt(square[i].price/2+square[i].level*(square[i].houseprice/2))+"</td></tr>";
         }
-        else if(square[i].mortgage){
+        else if(p.id==square[i].owner&&square[i].mortgage){
             j++;
             html += "<tr><td class='mbtn'><button type=\"button\" class='btn-warning' onclick='unmortage("+i+")'>赎回</button></td>" +
                 "<td class='statscellcolor' style='background: " + square[i].color+";border: 1px solid grey;' onmouseover='showdeed("+i+");' onmouseout='hidedeed();'></td>"+
@@ -993,7 +1060,7 @@ function levelUp(position)
 
         $("#levelupyes").on("click", function () {
             s.level++;
-            game.addMoney(s.houseprice, player[turn].id);
+            game.addMoney(-s.houseprice, player[turn].id);
             document.getElementById("owenerholder" + position).innerText = "Level " + s.level;
             infoDisplay(player[turn].name + " 花费了 $" + s.houseprice + " 把 " + s.name + " 升到了 " + s.level + " 级 ", player[turn].color);
             $("#popupwrap").hide();
