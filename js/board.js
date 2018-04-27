@@ -9,8 +9,6 @@ window.onload = function() {
 
     deed();
 
-
-
     endTurn();
 
 }
@@ -182,15 +180,16 @@ function showStats()
     });
 }
 
-function trade() {
+function trade()
+{
     var p = player[turn];
 
-    document.getElementById("popup").style.width = "300px";
+    document.getElementById("popup").style.width = "400px";
     document.getElementById("popup").style.top = "0px";
     document.getElementById("popup").style.left = "0px";
     var s=0,b=0;
     var html;
-    var htmls = "<table align='center'><tr><td colspan='2'><input id='tradee' type='text' placeholder='输入出售价'/></td><td>" +
+    var htmls = "<table id='selllist' align='center'><tr><td colspan='2'><input onkeyup=\"this.value=this.value.replace(/\\D/g,'')\" onafterpaste=\"this.value=this.value.replace(/\\D/g,'')\" id='selloutp' type='text' placeholder='输入出售价'/></td><td>" +
         "<div>" +
         "<select name=\"selectAge\" id=\"selectplayer\">";
     for (var i=0;i<pcount;i++){
@@ -198,8 +197,9 @@ function trade() {
             htmls += "<option value='"+player[i].id+"'>"+player[i].name+"</option>";
         }
     }
+
     htmls += "</select></div></td><td>&nbsp;&nbsp;等级</td></tr>";
-    var htmlb = "<table align='center'><tr><td colspan='3'><input id='tradee' type='text' placeholder='输入购买价'/></td><td>&nbsp;&nbsp;拥有者&nbsp;&nbsp;</td><td>&nbsp;&nbsp;等级</td></tr>";
+    var htmlb = "<table id='buylist' align='center'><tr><td colspan='3'><input onkeyup=\"this.value=this.value.replace(/\\D/g,'')\" onafterpaste=\"this.value=this.value.replace(/\\D/g,'')\" id='buyinp' type='text' placeholder='输入购买价'/></td><td>&nbsp;&nbsp;拥有者&nbsp;&nbsp;</td><td>&nbsp;&nbsp;等级</td></tr>";
 
     document.getElementById("popuptext").innerHTML = "<h4>交易</h4>"+
         "<ul class=\"nav nav-tabs\" role=\"tablist\">" +
@@ -210,23 +210,43 @@ function trade() {
     for(var i=0;i<square.length;i++){
         if(square[i].owner==p.id&&!square[i].mortgage){
             s += 1;
-            console.log("sell:"+s);
-            htmls += "<tr><td class='mbtn'><input type=\"radio\" name=\"radiobutton\" /></td>" +
+            htmls += "<tr><td class='mbtn'><input type=\"radio\" name=\"radio1\" value='"+i+"' /></td>" +
                 "<td class='statscellcolor' style='background: " + square[i].color+";border: 1px solid grey;' onmouseover='showdeed("+i+");' onmouseout='hidedeed();'></td>"+
                 "<td class='mname2'>"+square[i].name+"</td><td>"+square[i].level+"级</td></tr>";
-        }else if(square[i].owner!=-1&&square[i].owner!=p.id) {
+        }else if(square[i].owner!=-1&&square[i].owner!=p.id&&!square[i].mortgage) {
             b += 1;
-            console.log("buy:"+b);
-            htmlb += "<tr><td class='mbtn'><input type=\"radio\" name=\"radiobutton\" /></td>" +
+            htmlb += "<tr><td class='mbtn'><input type=\"radio\" name=\"radio2\" value='"+i+"' /></td>" +
                 "<td class='statscellcolor' style='background: " + square[i].color + ";border: 1px solid grey;' onmouseover='showdeed(" + i + ");' onmouseout='hidedeed();'></td>" +
                 "<td class='mname2'>" + square[i].name + "</td><td>"+player[getIndexbyId(square[i].owner)].name+"</td><td>"+square[i].level+"级</td></tr>";
         }
     }
+    if(p.JailCard>0){
+        htmls += "<tr><td class='mbtn'><input type=\"radio\" name=\"radio1\" value='100' /></td><td></td>"+
+            "<td class='mname2'>免费出狱卡</td><td>"+p.JailCard+"张</td></tr>";
+        s+=1;
+    }
+    for(var i=0;i<pcount;i++) {
+        if (player[i].id != p.id && player[i].JailCard > 0)
+            htmlb += "<tr><td class='mbtn'><input type=\"radio\" name=\"radio2\" value='100' /></td><td></td><td>免费出狱卡</td>" +
+                "<td class='mname2'>" + player[i].name + "</td><td>" + p.JailCard + "张</td></tr>";
+        b+=1;
+    }
 
-    htmls += "</table>";
-    htmlb += "</table>";
+    if(s>0) {
+        htmls += "</table><br><div>" +
+            "<button type=\"button\" class='btn btn-success' value=\"Yes\" onclick='sellpropose()'>发起出售交易</button>" +
+            "<button type=\"button\" class='cancle btn btn-warning' value=\"No\" >取消</button></div>";
+    }else
+        htmls = "无可出售物品" +
+            "<div><button type=\"button\" class='cancle btn btn-warning' value=\"No\" >取消</button></div>";
+    if(b>0) {
+        htmlb += "</table><br><div>" +
+            "<button type=\"button\" class='btn btn-success' value=\"Yes\" onclick='buypropose()'>发起购买交易</button>" +
+            "<button type=\"button\" class='cancle btn btn-warning' value=\"No\" >取消</button></div>";
+    }else
+        htmlb = "无可购买物品" +
+            "<div><button type=\"button\" class='cancle btn btn-warning' value=\"No\" >取消</button></div>";
 
-// <input id='tradee' type='text' placeholder='输入交易额'/>
 
     html = "<div class=\"tab-content\">";
     html += "<div role=\"tabpanel\" class=\"active tab-pane\" id=\"sell\">"+htmls+"</div>";
@@ -235,13 +255,9 @@ function trade() {
 
 
     document.getElementById("popuptext").innerHTML += html;
-    document.getElementById("popuptext").innerHTML +=
-        "<br><div>" +
-        "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
-        "</div>";
 
 
-    $("#levelupno").on("click", function () {
+    $(".cancle").on("click", function () {
 
         $("#popupwrap").hide();
         $("#popupbackground").fadeOut(400);
@@ -251,6 +267,34 @@ function trade() {
     $("#popupbackground").fadeIn(400, function() {
         $("#popupwrap").show();
     });
+}
+
+function sellpropose()
+{
+    var f = $("input[name='radio1']:checked").val();
+    var m = $("#selloutp").val();
+    var pid = $("#selectplayer").val();
+    if(isNaN(f)) {alert("请选择一个房产或者出狱卡进行出售");return;}
+    if(!(m>0)) {alert("请输入出售价格");return;}
+    infoDisplay(player[turn].name+" 向 "+player[getIndexbyId(pid)].name+" 发起出售交易：$"+m+" 出售 "+square[f].name,"black",2,player[turn].id,pid,f,m);
+
+    $("#popupwrap").hide();
+    $("#popupbackground").fadeOut(400);
+}
+
+function buypropose()
+{
+    var f = $("input[name='radio2']:checked").val();
+    var m = $("#buyinp").val();
+    if(isNaN(f)) {alert("请选择一个房产或者出狱卡购买");return;}
+    if(!(m>0)) {alert("请输入购买价格");return;}
+
+    infoDisplay(player[turn].name+" 向 "+player[getIndexbyId(square[f].owner)].name+" 发起出售交易：$"+m+" 收购 "+square[f].name,"black",3,square[f].owner,player[turn].id,f,m);
+
+
+
+    $("#popupwrap").hide();
+    $("#popupbackground").fadeOut(400);
 }
 
 function mortgage()
@@ -375,10 +419,33 @@ function Game()
 
 
     this.next = function() {
-        // console.log(turn);
-        if (player[turn].money < 0) {//还款后余额还是低于0，宣布破产
-            console.log(player[turn].name+" is bankrupted");
-            bankrupt();
+        if (player[turn].money < 0) {
+
+            document.getElementById("popup").style.width = "300px";
+            document.getElementById("popup").style.top = "0px";
+            document.getElementById("popup").style.left = "0px";
+
+            document.getElementById("popuptext").innerHTML =  "<h4>提示</h4>" +
+                "<div>现金低于0，您需要进行抵押或者出售财产才能继续游戏!</div>" ;
+
+                document.getElementById("popuptext").innerHTML +=
+                    "<div>" +
+                    "<button type=\"button\" class=\"btn btn-success \" onclick=\"trade()\">交易</button>\n" +
+                    "<button type=\"button\" class=\"btn btn-primary \" onclick=\"mortgage()\">抵押</button>" +
+                    "<button type=\"button\" class=\"btn btn-danger hhhh\" onclick=\"bankrupt()\">认输</button>"+
+                    "</div>";
+
+            $(".hhhh").on("click", function () {
+                $("#popupwrap").hide();
+                $("#popupbackground").fadeOut(400);
+            });
+
+
+            // Show using animation.
+            $("#popupbackground").fadeIn(400, function() {
+                $("#popupwrap").show();
+            });
+
         } else {//继续游戏
             roll();
         }
@@ -431,10 +498,6 @@ function Game()
         Rent = rent;
     }
 
-    this.getRent = function(){
-        return Rent;
-    }
-
     this.goToJail = function (){
         var p = player[turn];
         var start = p.position;
@@ -476,7 +539,7 @@ function Game()
 
     }
 
-    this.buy = function (position,id,type) {
+    this.buy = function (position,id,type,trade) {
         square[position].owner = id;
         document.getElementById("owenerholder" + position).style.border = "2px solid " + player[getIndexbyId(id)].color;
         if(type==0) {
@@ -487,10 +550,11 @@ function Game()
         if(type==5){
             game.addMoney(-50, player[turn].id);
             infoDisplay(player[turn].name + " 花费了 $50 购买了房产：" + square[position].name, player[turn].color);
-        }else {
+        } else {
             game.addMoney(-square[position].price, player[turn].id);
             infoDisplay(player[turn].name + " 花费了 $" + square[position].price + " 购买了房产：" + square[position].name, player[turn].color);
         }
+        raiserent();
 
     }
 
@@ -516,7 +580,6 @@ function Game()
     }
     
     this.accountant = function (p) {
-        console.log(p);
         var str,prop,comp,card;
         var j=0,k=0;
         prop = "    房产有：";
@@ -524,7 +587,6 @@ function Game()
         card = "    免费出狱卡："+p.JailCard+"张(每张价值 $50);";
         for (var i=0;i<52;i++){
             if(square[i].owner==p.id){
-                console.log(square[i].name);
                 if(square[i].groupNumber==1){
                     k++;
                     comp += square[i].name+"(价值 $"+square[i].price+"); ";
@@ -544,6 +606,48 @@ function Game()
         return str;
     }
 
+    this.JailCard = function () {
+        var p = player[turn];
+        document.getElementById("popup").style.width = "300px";
+        document.getElementById("popup").style.top = "0px";
+        document.getElementById("popup").style.left = "0px";
+
+        document.getElementById("popuptext").innerHTML =
+            "<h4>提示</h4>" +
+            "<div>您目前有"+p.JailCard+"张免费出狱卡，是否使用？</div>" ;
+
+            document.getElementById("popuptext").innerHTML +=
+                "<div>" +
+                "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">使用</button>" +
+                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+                "</div>";
+
+            $("#levelupyes").on("click", function () {
+                p.JailCard--;
+                p.jail = false;
+                p.jailroll = 0;
+                doublecount = 0;
+                p.position = 21;
+                updatePosition("20_5",21);
+                infoDisplay(p.name + " 使用了免费出狱卡以此出狱.");
+                $("#popupwrap").hide();
+                $("#popupbackground").fadeOut(400);
+            });
+
+
+
+        $("#levelupno").on("click", function () {
+            $("#popupwrap").hide();
+            $("#popupbackground").fadeOut(400);
+        });
+
+
+        // Show using animation.
+        $("#popupbackground").fadeIn(400, function() {
+            $("#popupwrap").show();
+        });
+
+    }
 
 }
 
@@ -604,6 +708,9 @@ function roll()
                 return;
             }else {//继续监狱生活
                 infoDisplay("您未能掷出相同数，继续在监狱呆着.",p.color);
+                if(p.JailCard>0){
+                    game.JailCard();
+                }
                 $("#endTurn").prop('disabled', false);
                 return;
             }
@@ -634,7 +741,6 @@ function updatePosition(start,end)
     for (var x = 0; x < 52; x++) {
         sq = square[x];
         var holder = document.getElementById("holder" + x);
-        // console.log(holder);
         holder.innerHTML="";
         for (var y = 0; y < pcount; y++) {
             if (player[y].position == x && y!=turn && !player[y].jail)
@@ -685,16 +791,79 @@ function updatePosition(start,end)
 
 }
 
-function infoDisplay(msg,color)
+function infoDisplay(msg,color,tradetype,seller,buyer,sid,money)
 {
+
     var disarea = document.getElementById("displayInfo");
-    var info = disarea.appendChild(document.createElement("p"))
+    var info = disarea.appendChild(document.createElement("p"));
     info.className = "triangle-obtuse";
     info.innerText = msg;
+    if(tradetype>1){
+        var accepte = info.appendChild(document.createElement("a"));
+        accepte.innerText = "    接受";
+        var ignore = info.appendChild(document.createElement("a"));
+        ignore.innerText = "     忽略";
+        accepte.onclick = function () {
+            info.removeChild(accepte);
+            info.removeChild(ignore);
+            acceptSellDeal(tradetype,seller,buyer,sid,money);
+        };
+        ignore.onclick = function () {
+            info.removeChild(accepte);
+            info.removeChild(ignore);
+        }
+        setTimeout(function () {
+            if(info.childNodes.length>1) {
+                info.removeChild(accepte);
+                info.removeChild(ignore);
+                infoDisplay("交易超时已经自动取消");
+            }
+        },holdtime*10);
+
+    }
     info.style.borderColor = color;
 
 
     $("#displayInfo").scrollTop($("#displayInfo").prop("scrollHeight"));
+}
+
+function acceptSellDeal(tradetype,seller,buyer,sid,money) {
+    if(tradetype==2&&sid!=100){
+        game.addMoney(parseInt(money),seller);
+        game.addMoney(-money,buyer);
+        square[sid].owner=buyer;
+        document.getElementById("owenerholder" + sid).style.border = "2px solid " + player[getIndexbyId(buyer)].color;
+        if(square[sid].groupNumber!=2) {
+            document.getElementById("owenerholder" + sid).innerText = "Level 0";
+        }else{
+            document.getElementById("owenerholder" + sid).innerText = player[getIndexbyId(buyer)].name;
+        }
+        infoDisplay(player[getIndexbyId(buyer)].name+"同意了 "+player[getIndexbyId(seller)].name+"的交易请求，买进了 "+square[sid].name+" 交易完成！！！");
+    }else if(tradetype==3&&sid!=100){
+        game.addMoney(parseInt(money),seller);
+        game.addMoney(-money,buyer);
+        square[sid].owner=buyer;
+        document.getElementById("owenerholder" + sid).style.border = "2px solid " + player[getIndexbyId(buyer)].color;
+        if(square[sid].groupNumber!=2) {
+            document.getElementById("owenerholder" + sid).innerText = "Level 0";
+        }else{
+            document.getElementById("owenerholder" + sid).innerText = player[getIndexbyId(buyer)].name;
+        }
+        infoDisplay("经过"+player[getIndexbyId(seller)].name+"的同意, "+player[getIndexbyId(buyer)].name+" 买进了 "+square[sid].name+" 交易完成！！！");
+    }else if(tradetype==2&&sid==100){
+        game.addMoney(parseInt(money),seller);
+        game.addMoney(-money,buyer);
+        player[getIndexbyId(buyer)].JailCard++;
+        player[getIndexbyId(seller)].JailCard--;
+        infoDisplay(player[getIndexbyId(buyer)].name+"同意了 "+player[getIndexbyId(seller)].name+"的交易请求，购买了免费出狱卡1张 交易完成！！！");
+    }else if(tradetype==3&&sid==100){
+        game.addMoney(parseInt(money),seller);
+        game.addMoney(-money,buyer);
+        player[getIndexbyId(buyer)].JailCard++;
+        player[getIndexbyId(seller)].JailCard--;
+        infoDisplay("经过"+player[getIndexbyId(seller)].name+"的同意, "+player[getIndexbyId(buyer)].name+" 出售了免费出狱卡1张 交易完成！！！");
+    }
+
 }
 
 function land()
@@ -826,10 +995,10 @@ function land()
             }else if(s.owner==p.id){
                 if (s.level<4)
                     levelUp(p.position);
-            }else if(!p.mortgage){
+            }else if(!s.mortgage){
                 //支付租金
                 game.pay();
-                if(square[44].owner==p.id&&s.level==0&&square[44].mortgage)
+                if(square[44].owner==p.id&&s.level==0&&!square[44].mortgage)
                     popup(p.position,4);
             }
             break;
@@ -1309,5 +1478,222 @@ function getIndexbyId(id)
             return i;
     
 }
+
+function raiserent() {
+    var a = [0,0,0,0,0,0,0,0,0,0];
+        if(a[0]==0&&square[1].owner==square[2].owner&&square[3].owner==square[49]&&square[3].owner==square[1]){
+            a[0]++;
+            square[1].rent0 *= 1.1;
+            square[1].rent1 *= 1.1;
+            square[1].rent2 *= 1.1;
+            square[1].rent3 *= 1.1;
+            square[1].rent4 *= 1.1;
+            square[2].rent0 *= 1.1;
+            square[2].rent1 *= 1.1;
+            square[2].rent2 *= 1.1;
+            square[2].rent3 *= 1.1;
+            square[2].rent4 *= 1.1;
+            square[3].rent0 *= 1.1;
+            square[3].rent1 *= 1.1;
+            square[3].rent2 *= 1.1;
+            square[3].rent3 *= 1.1;
+            square[3].rent4 *= 1.1;
+            square[49].rent0 *= 1.1;
+            square[49].rent1 *= 1.1;
+            square[49].rent2 *= 1.1;
+            square[49].rent3 *= 1.1;
+            square[49].rent4 *= 1.1;
+            infoDisplay(player[square[1].owner].name+" 齐集了棕色房产，棕色房产全体房租增加10%！");
+        }
+        if(a[1]==0&&square[6].owner==square[9].owner&&square[14].owner==square[28]&&square[6].owner==square[14]){
+            a[1]++;
+            square[6].rent0 *= 1.1;
+            square[6].rent1 *= 1.1;
+            square[6].rent2 *= 1.1;
+            square[6].rent3 *= 1.1;
+            square[6].rent4 *= 1.1;
+            square[9].rent0 *= 1.1;
+            square[9].rent1 *= 1.1;
+            square[9].rent2 *= 1.1;
+            square[9].rent3 *= 1.1;
+            square[9].rent4 *= 1.1;
+            square[14].rent0 *= 1.1;
+            square[14].rent1 *= 1.1;
+            square[14].rent2 *= 1.1;
+            square[14].rent3 *= 1.1;
+            square[14].rent4 *= 1.1;
+            square[28].rent0 *= 1.1;
+            square[28].rent1 *= 1.1;
+            square[28].rent2 *= 1.1;
+            square[28].rent3 *= 1.1;
+            square[28].rent4 *= 1.1;
+            infoDisplay(player[square[14].owner].name+" 齐集了浅蓝房产，棕色房产全体房租增加10%！");
+        }
+        if(a[2]==0&&square[8].owner==square[11].owner&&square[11].owner==square[13]){
+            a[2]++;
+            square[8].rent0 *= 1.1;
+            square[8].rent1 *= 1.1;
+            square[8].rent2 *= 1.1;
+            square[8].rent3 *= 1.1;
+            square[8].rent4 *= 1.1;
+            square[11].rent0 *= 1.1;
+            square[11].rent1 *= 1.1;
+            square[11].rent2 *= 1.1;
+            square[11].rent3 *= 1.1;
+            square[11].rent4 *= 1.1;
+            square[13].rent0 *= 1.1;
+            square[13].rent1 *= 1.1;
+            square[13].rent2 *= 1.1;
+            square[13].rent3 *= 1.1;
+            square[13].rent4 *= 1.1;
+            infoDisplay(player[square[11].owner].name+" 齐集了粉红房产，粉红房产全体房租增加10%！");
+        }
+        if(a[3]==0&&square[16].owner==square[18].owner&&square[19].owner==square[51]&&square[16].owner==square[19]){
+            a[3]++;
+            square[16].rent0 *= 1.1;
+            square[16].rent1 *= 1.1;
+            square[16].rent2 *= 1.1;
+            square[16].rent3 *= 1.1;
+            square[16].rent4 *= 1.1;
+            square[18].rent0 *= 1.1;
+            square[18].rent1 *= 1.1;
+            square[18].rent2 *= 1.1;
+            square[18].rent3 *= 1.1;
+            square[18].rent4 *= 1.1;
+            square[19].rent0 *= 1.1;
+            square[19].rent1 *= 1.1;
+            square[19].rent2 *= 1.1;
+            square[19].rent3 *= 1.1;
+            square[19].rent4 *= 1.1;
+            square[51].rent0 *= 1.1;
+            square[51].rent1 *= 1.1;
+            square[51].rent2 *= 1.1;
+            square[51].rent3 *= 1.1;
+            square[51].rent4 *= 1.1;
+            infoDisplay(player[square[16].owner].name+" 齐集了土黄房产，土黄房产全体房租增加10%！");
+        }
+        if(a[4]==0&&square[10].owner==square[23].owner&&square[10].owner==square[24]){
+            a[4]++;
+            square[10].rent0 *= 1.1;
+            square[10].rent1 *= 1.1;
+            square[10].rent2 *= 1.1;
+            square[10].rent3 *= 1.1;
+            square[10].rent4 *= 1.1;
+            square[23].rent0 *= 1.1;
+            square[23].rent1 *= 1.1;
+            square[23].rent2 *= 1.1;
+            square[23].rent3 *= 1.1;
+            square[23].rent4 *= 1.1;
+            square[24].rent0 *= 1.1;
+            square[24].rent1 *= 1.1;
+            square[24].rent2 *= 1.1;
+            square[24].rent3 *= 1.1;
+            square[24].rent4 *= 1.1;
+            infoDisplay(player[square[10].owner].name+" 齐集了红色房产，红色房产全体房租增加10%！");
+        }
+        if(a[5]==0&&square[26].owner==square[27].owner&&square[26].owner==square[29]){
+            a[5]++;
+            square[26].rent0 *= 1.1;
+            square[26].rent1 *= 1.1;
+            square[26].rent2 *= 1.1;
+            square[26].rent3 *= 1.1;
+            square[26].rent4 *= 1.1;
+            square[27].rent0 *= 1.1;
+            square[27].rent1 *= 1.1;
+            square[27].rent2 *= 1.1;
+            square[27].rent3 *= 1.1;
+            square[27].rent4 *= 1.1;
+            square[29].rent0 *= 1.1;
+            square[29].rent1 *= 1.1;
+            square[29].rent2 *= 1.1;
+            square[29].rent3 *= 1.1;
+            square[29].rent4 *= 1.1;
+            infoDisplay(player[square[26].owner].name+" 齐集了黄色房产，黄色房产全体房租增加10%！");
+        }
+        if(a[6]==0&&square[31].owner==square[32].owner&&square[31].owner==square[34]){
+            a[6]++;
+            square[31].rent0 *= 1.1;
+            square[31].rent1 *= 1.1;
+            square[31].rent2 *= 1.1;
+            square[31].rent3 *= 1.1;
+            square[31].rent4 *= 1.1;
+            square[32].rent0 *= 1.1;
+            square[32].rent1 *= 1.1;
+            square[32].rent2 *= 1.1;
+            square[32].rent3 *= 1.1;
+            square[32].rent4 *= 1.1;
+            square[34].rent0 *= 1.1;
+            square[34].rent1 *= 1.1;
+            square[34].rent2 *= 1.1;
+            square[34].rent3 *= 1.1;
+            square[34].rent4 *= 1.1;
+            infoDisplay(player[square[31].owner].name+" 齐集了绿色房产，绿色房产全体房租增加10%！");
+        }
+        if(a[7]==0&&square[30].owner==square[37].owner&&square[39].owner==square[40]&&square[30].owner==square[39]){
+            a[7]++;
+            square[30].rent0 *= 1.1;
+            square[30].rent1 *= 1.1;
+            square[30].rent2 *= 1.1;
+            square[30].rent3 *= 1.1;
+            square[30].rent4 *= 1.1;
+            square[37].rent0 *= 1.1;
+            square[37].rent1 *= 1.1;
+            square[37].rent2 *= 1.1;
+            square[37].rent3 *= 1.1;
+            square[37].rent4 *= 1.1;
+            square[39].rent0 *= 1.1;
+            square[39].rent1 *= 1.1;
+            square[39].rent2 *= 1.1;
+            square[39].rent3 *= 1.1;
+            square[39].rent4 *= 1.1;
+            square[40].rent0 *= 1.1;
+            square[40].rent1 *= 1.1;
+            square[40].rent2 *= 1.1;
+            square[40].rent3 *= 1.1;
+            square[40].rent4 *= 1.1;
+            infoDisplay(player[square[30].owner].name+" 齐集了深蓝房产，深蓝房产全体房租增加10%！");
+        }
+        if(a[8]==0&&square[41].owner==square[43].owner&&square[41].owner==square[48]){
+            a[8]++;
+            square[41].rent0 *= 1.1;
+            square[41].rent1 *= 1.1;
+            square[41].rent2 *= 1.1;
+            square[41].rent3 *= 1.1;
+            square[41].rent4 *= 1.1;
+            square[43].rent0 *= 1.1;
+            square[43].rent1 *= 1.1;
+            square[43].rent2 *= 1.1;
+            square[43].rent3 *= 1.1;
+            square[43].rent4 *= 1.1;
+            square[48].rent0 *= 1.1;
+            square[48].rent1 *= 1.1;
+            square[48].rent2 *= 1.1;
+            square[48].rent3 *= 1.1;
+            square[48].rent4 *= 1.1;
+            infoDisplay(player[square[41].owner].name+" 齐集了蓝绿房产，蓝绿房产全体房租增加10%！");
+        }
+        if(a[9]==0&&square[42].owner==square[45].owner&&square[42].owner==square[46]){
+            a[9]++;
+            square[42].rent0 *= 1.1;
+            square[42].rent1 *= 1.1;
+            square[42].rent2 *= 1.1;
+            square[42].rent3 *= 1.1;
+            square[42].rent4 *= 1.1;
+            square[45].rent0 *= 1.1;
+            square[45].rent1 *= 1.1;
+            square[45].rent2 *= 1.1;
+            square[45].rent3 *= 1.1;
+            square[45].rent4 *= 1.1;
+            square[46].rent0 *= 1.1;
+            square[46].rent1 *= 1.1;
+            square[46].rent2 *= 1.1;
+            square[46].rent3 *= 1.1;
+            square[46].rent4 *= 1.1;
+            infoDisplay(player[square[42].owner].name+" 齐集了淡紫房产，淡紫房产全体房租增加10%！");
+        }
+}
+
+
+
 
 

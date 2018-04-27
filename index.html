@@ -78,23 +78,45 @@ $(function () {
 			<div id="tip">提示: 刷新页面会导致游戏直接终止.</div>
 		</div>
 		<div class="col-md-5" id="rules">
-			<div>游戏规则</div>
 			
 			
 			<!-- 导航区 -->    
 			<ul class="nav nav-tabs" role="tablist">    
-				<li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
-				<li role="presentation"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
-				<li role="presentation"><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
-				<li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>  
+				<li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">基本游戏介绍</a></li>
+				<li role="presentation"><a href="#profile" role="tab" data-toggle="tab">基本游戏设置</a></li>
+				<li role="presentation"><a href="#messages" role="tab" data-toggle="tab">交易与抵押</a></li>
+				<li role="presentation"><a href="#settings" role="tab" data-toggle="tab">作者</a></li>
 			</ul>     
   
 			<!-- 面板区 -->   
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="home">1</div>    
-				<div role="tabpanel" class="tab-pane" id="profile">2</div>    
-				<div role="tabpanel" class="tab-pane" id="messages">3</div>    
-				<div role="tabpanel" class="tab-pane" id="settings">4</div>   
+				<div role="tabpanel" class="tab-pane active" id="home">
+					<h5>&nbsp;&nbsp;&nbsp;&nbsp;大富翁，又名地产大亨。是一种多人策略图版游戏。参赛者分得游戏金钱，凭运气（掷骰子）及交易策略，买地、建楼以赚取租金。英文原名monopoly意为“垄断”，因为最后只得一个胜利者，其余均破产收场。游戏的设计当初旨在暴露放任资本主义的弊端，但是推出之后却受到大众欢迎。</h5>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="profile">
+					<div><h4>游戏玩家个数：</h4><p>2-7人</p></div>
+					<div><h4>初始设置：</h4><p>在本页面中，每个玩家均可以修改自己的游戏名、代表颜色、标志，点击确定后将会进入游戏主界面；每个玩家从起点出发，初始基金 $1500，每次经过起点时将会得到 $500；每个用户初始拥有一张免费出狱卡。</p></div>
+					<div><h4>掷骰：</h4><p>每次同时掷出两颗骰子，两颗骰子的点数相同的话可以多一个回合，若在此回合入狱，则多出来的回合取消。连续三次点数相同直接入狱。到达无人拥有的地皮，玩家可选择要不要购买。到达有人拥有的地皮，地主可依规定收租。
+					</p></div>
+					<div><h4>地产：</h4><p>每个地产都有指定的颜色，当一个用户拥有所有颜色的地产时，该颜色的地皮的房租将会永久性地提升10%；当房产的主人再次到达该房产时可以选择升级该房产以获得更高的租金；目前游戏中地产分为四类：普通地产、公司地产、功能地产以及监狱。</p>
+						<div style="color: darkblue">普通房产可以购买升级</div>
+						<div style="color: darkgreen">公司房产可以购买,每个公司房产都有其特殊的能力</div>
+						<div style="color: darkorange">功能房产不能被购买或者升级，含有独特的功能机制，比如机遇卡、奖励惩罚等。</div>
+						<div style="color: #d43f3a">身处监狱的用户不能移动，有三种出狱方式：抛出相同数；使用出狱卡；三回合未能出狱后能够花费 $50 自我保释</div>
+					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="messages">
+					<h5>为了增添游戏的自主性，增加了交易的抵押系统，用户能够勾根据需求调整自己的策略。</h5>
+					<div><h4>交易</h4><p>用户可以将自己的地产或者出狱卡卖给指定玩家，价格自定。同理，用户也可以从指定玩家手中购得。被指定用户可以自行判断交易是否合理采取不同应对。</p></div>
+					<div><h4>抵押</h4><p>在资金不足时，用户可以将自己的地产抵押给银行，获得对应现金；当资金充足时可以从银行赎回，需要交付抵押额的110%。<br> 当房产被抵押时，将停止收租(普通房产)或执行特殊功能(公司房产) </p>
+					<p>抵押额计算公式：购买价格／2 + 等级 * (升级价格／2)；</p></div>
+					<div></div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="settings">
+					<div><h4>作者：</h4><p>肖冲</p></div>
+					<div><h4>联系方式：</h4><code>915720461@qq.com</code></div>
+					<div><h4>说明：</h4><p>学年设计作品  西南大学  2018.4.26</p></div>
+				</div>
 			</div>    
 			
 		</div>

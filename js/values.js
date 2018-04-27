@@ -65,11 +65,9 @@ function Player(name, color, token, id) {
     this.token = token;
     this.position = 0;
     this.money = 1500;
-    this.creditor = -1;
     this.jail = false;
     this.jailroll = 0;
-    this.JailCard = 0;
-    this.bidding = true;
+    this.JailCard = 1;
 }
 
 var square = [];
@@ -133,8 +131,8 @@ var chanceCards = [];
 
 
 
-chanceCards[0] = new Card("出狱卡，这张卡将会被保存到使用或者交易出去.", function(p) {
-	p.JailCard++;
+chanceCards[0] = new Card("金融风暴投资不利，损失了$100.", function(p) {
+    game.addMoney(-100,p.id);
 });
 chanceCards[1] = new Card("您被要求支付税金,基础税金$20，每个地产每升一级加收$12.", function(p) {
     var tax = 0;
@@ -221,8 +219,8 @@ chanceCards[5] = new Card("前进到最近的一个公司. 如果无主, 您可�
 chanceCards[6] = new Card("银行支付$50利息给您.", function(p) {
 	game.addMoney(50,p.id);
 });
-chanceCards[7] = new Card("金融风暴投资不利，损失了$100.", function(p) {
-    game.addMoney(-100,p.id);
+chanceCards[7] = new Card("出狱卡，这张卡将会被保存到使用或者交易出去.", function(p) {
+    p.JailCard++;
 });
 chanceCards[8] = new Card("支付济贫税$20.", function(p) {
     game.addMoney(-20,p.id);
@@ -281,7 +279,7 @@ chanceCards[16] = new Card("除了您之外所有玩家支付税金，基础税�
             tax[square[i].owner] += 20 + square[i].level * 12;
 		}
     }
-    console.log(tax);
+    // console.log(tax);
     for(var i = 0; i < pcount; i++){
 		if(tax[i]>0) {
             game.addMoney(-tax[i], i);
