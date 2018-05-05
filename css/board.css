@@ -518,3 +518,9 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 	width: 50%;
 	float: left;
 }
+
+
+.form-wrapper {
+	padding-left: 20px;
+	margin: 20px auto;
+}
