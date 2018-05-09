@@ -703,7 +703,7 @@ function roll()
                 popup(21,3);
                 return;
             }else {//继续监狱生活
-                infoDisplay("您未能掷出相同数，继续在监狱呆着.",p.color);
+                toast(p.name+"未能掷出相同数，继续在监狱呆着.",p.color,2);
                 if(p.JailCard>0){
                     game.JailCard();
                 }
