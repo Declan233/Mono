@@ -7,7 +7,7 @@ window.onload = function() {
 
 
 
-var available_colors = new Array('blue','red','green','fuchsia','gray','lime','maroon','navy','olive','orange','purple', 'silver', 'teal');
+var available_colors = new Array('blue','red','green','fuchsia','gray','maroon','navy','olive','orange','purple', 'silver', 'teal');
 var available_tokens = new Array('flash','fire','leaf','plane','heart','bell','tower','apple','star');
 
 _draw_setup = {}

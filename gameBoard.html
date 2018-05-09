@@ -27,7 +27,8 @@
 	</script>
 
 	<link rel="stylesheet" type="text/css" href="css/basic-quickflips.css" />
-
+	<link rel="stylesheet" type="text/css" href="css/jquery.toast.css" />
+	<script type="text/javascript" src="js/jquery.toast.js"></script>
 
 
 <title>Board</title>
@@ -56,7 +57,8 @@
 				<td colspan="3" rowspan="8" class="board-center col-md-3">
 					<div id="displayCell">
 						<div id="displayTitle">游戏消息
-							<span onclick="saveTofile()" class="glyphicon glyphicon-save" aria-hidden="true" id="savetofile" ></span>
+							<span onclick="saveTofile()" class="glyphicon glyphicon-download" aria-hidden="true" id="savetofile" ></span>
+							<span onclick="openfile()" class="glyphicon glyphicon-upload" aria-hidden="true" id="openfile" ></span>
 						</div>
 						<div id="displayInfo"></div>
 					</div>
@@ -92,6 +94,7 @@
 					</div>
 
 
+					<div id="shield"></div>
 					<div class="quickFlip">
 						<div class="blackPanel">
 							<h3 id="cc1" class="first quickFlipCta">运气卡</h3>

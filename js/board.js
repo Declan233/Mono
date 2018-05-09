@@ -67,17 +67,14 @@ function initBoard()
     }
     enlargeWrap.innerHTML = HTML;
 
-    // Add images to enlarges.
-    // document.getElementById("enlarge0token").innerHTML += '<img src="image/arrow_icon.png" height="40" width="136" alt="" />';
-    // document.getElementById("enlarge20price").innerHTML += "<img src='image/free_parking_icon.png' height='80' width='72' alt='' style='position: relative; top: -20px;' />";
-    // document.getElementById("enlarge38token").innerHTML += '<img src="image/tax_icon.png" height="60" width="70" alt="" style="position: relative; top: -20px;" />';
 
+    var top = $(".quickFlip").offset().top;
+    document.getElementById("shield").style.top = top+"px";
 
     for(var i=0;i<52;i++){
         if(i!=21){
         var cell = document.getElementById("cell" +i);
         var hpid = "holder"+i;
-        // console.log(cell);
             cell.innerHTML +=
                 "<div class='cellinnerwrap'>" +
                     "<div class='owenerholder' id='owenerholder"+i+"'></div>" +
@@ -417,7 +414,6 @@ function Game()
         doublecount++;
     };//随机生成骰子点数
 
-
     this.next = function() {
         if (player[turn].money < 0) {
 
@@ -491,7 +487,7 @@ function Game()
         if(p.id!=square[25].owner||round3==0){
         game.addMoney(-rent,p.id);
         game.addMoney(rent,s.owner);
-        infoDisplay(p.name+" 支付了 $"+rent+" 给 "+player[getIndexbyId(s.owner)].name,p.color);
+        toast(p.name+" 支付了 $"+rent+" 给 "+player[getIndexbyId(s.owner)].name,p.color,1);
         }else{
             infoDisplay("作为ORACLE的拥有者 "+p.name+" 该回合免税" );rent=0;
         }
@@ -671,15 +667,15 @@ function roll()
                 p.position -= 52;
                 end = p.position;
                 game.addMoney(500,p.id);
-                infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
+                toast(p.name+" 经过起点获得 $500 基金.",p.color,1);
             }else if(p.position <= 0&&dir==-1){
                 if(p.position != 0)
                     p.position += 52;
                 end = p.position;
                 game.addMoney(500,p.id);
-                infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
+                toast(p.name+" 经过起点获得 $500 基金.",p.color,1);
             }
-            infoDisplay(p.name+" 扔出了: "+(die1+die2)+" -- 相同数，到达了 " + square[p.position].name+" 同时获得再掷一次的机会.",p.color);
+            toast(p.name+" 扔出了: "+(die1+die2)+" -- 相同数，到达了 " + square[p.position].name+" 同时获得再掷一次的机会.",p.color,2);
             updatePosition(start,end);//更新位置
             setTimeout(land,holdtime);//执行方格内容
             $("#rollbtn").prop('disabled', false);
@@ -722,13 +718,13 @@ function roll()
     if (p.position >= 52&&dir==1) {
         p.position -= 52;end = p.position;
         game.addMoney(500,p.id);
-        infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
+        toast(p.name+" 经过起点获得 $500 基金.",p.color,1);
     }else if(p.position < 0&&dir==-1){
         p.position += 52;end = p.position;
         game.addMoney(500,p.id);
-        infoDisplay(p.name+" 经过起点获得 $500 基金.",p.color);
+        toast(p.name+" 经过起点获得 $500 基金.",p.color,1);
     }
-    infoDisplay(p.name+" 扔出了: "+(die1+die2)+" 到达了 "+square[p.position].name,p.color);
+    toast(p.name+" 扔出了: "+(die1+die2)+" 到达了 "+square[p.position].name,p.color,2);
     updatePosition(start,end);//更新位置
     setTimeout(land,holdtime);//执行方格内容
     $("#endTurn").prop('disabled', false);
@@ -789,6 +785,32 @@ function updatePosition(start,end)
     }
 
 
+}
+
+
+function toast(msg,color,type){
+    var heading='';
+    if(type==1){ }else if(type==2){ heading="抵达"; }
+    $.toast({
+        text: msg, // Text that is to be shown in the toast
+        heading: heading, // Optional heading to be shown on the toast
+
+        showHideTransition: 'slide', // fade, slide or plain
+        allowToastClose: true, // Boolean value true or false
+        hideAfter: 5000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+        stack: 6, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+
+        position: 'bottom-center',
+        bgColor: color+'',  // Background color of the toast
+        textColor: '#eeeeee',  // Text color of the toast
+        textAlign: 'left',  // Text alignment i.e. left, right or center
+        loader: true,  // Whether to show loader or not. True by default
+        loaderBg: '#23bcc6',  // Background color of the toast loader
+        beforeShow: function () {}, // will be triggered before the toast is shown
+        afterShown: function () {}, // will be triggered after the toat has been shown
+        beforeHide: function () {}, // will be triggered before the toast gets hidden
+        afterHidden: function () {}  // will be triggered after the toast has been hidden
+    });
 }
 
 function infoDisplay(msg,color,tradetype,seller,buyer,sid,money)
@@ -878,13 +900,13 @@ function land()
             switch (p.position){
                 case 4:
                     game.addMoney(-140,p.id);
-                    popup(p.position,2);
-                    infoDisplay(p.name+" 到达拉斯维加斯，缴纳了$140赌资.",p.color);
+                    // popup(p.position,2);
+                    toast(p.name+" 到达拉斯维加斯，缴纳了$140赌资.","#000000",1);
                     break;
                 case 12:
                     game.addMoney(-50,p.id);
-                    popup(p.position,2);
-                    infoDisplay(p.name+" 到达免税店，花费$50购物.",p.color);
+                    // popup(p.position,2);
+                    toast(p.name+" 到达免税店，花费$50购物.","#000000",1);
                     break;
                 case 15:
                     for(var i=0;i<pcount;i++){
@@ -892,23 +914,23 @@ function land()
                             game.addMoney(-40,player[i].id);
                     }
                     game.addMoney((pcount-1)*40,p.id);
-                    popup(p.position,2);
-                    infoDisplay(p.name+" 到达WTO，贸易频繁，资金流转不周，向其他每个玩家收取 $40 ,共获得 $"+(pcount-1)*40,p.color);
+                    // popup(p.position,2);
+                    toast(p.name+" 到达WTO，贸易频繁，资金流转不周，向其他每个玩家收取 $40 ,共获得 $"+(pcount-1)*40,"#000000",1);
                     break;
                 case 20:
                     game.addMoney(50,p.id);
-                    popup(p.position,2);
-                    infoDisplay(p.name+" 到达免费停车场，捡到$50.",p.color);
+                    // popup(p.position,2);
+                    toast(p.name+" 到达免费停车场，捡到$50.","#000000",1);
                     break;
                 case 36:
                     rate = 1.1;round2=2;
-                    popup(p.position,2);
-                    infoDisplay(p.name+" 到达香港，所有房产租金连续三回合提升10%.",p.color);
+                    // popup(p.position,2);
+                    toast(p.name+" 到达香港，所有房产租金连续三回合提升10%.","#000000",1);
                     break;
                 case 50:
                     dir=-1;round=2;
-                    popup(p.position,2);
-                    infoDisplay(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.");
+                    // popup(p.position,2);
+                    toast(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.","#000000",1);
                     break;
             }
             break;
@@ -963,9 +985,6 @@ function land()
             break;
         case 2:
             switch (p.position) {
-                case 21:
-                    popup(p.position,2);
-                    break;
                 case 35:
                     popup(p.position,2);
                     game.goToJail();

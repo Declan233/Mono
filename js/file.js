@@ -1,5 +1,20 @@
 function saveTofile(){
 
+    $.toast({
+        heading: '保存成功',
+        text: '文件已成功保存在 ~/Mono 下.',
+        icon: 'success',
+        position: { left : 100, right : 'auto', top : 'auto', bottom : 30 },
+        hideAfter: 5000,
+        loaderBg: '#FFFAFA',
+    })
+
+
+}
+
+
+function openfile(){
+
     document.getElementById("popup").style.width = "300px";
     document.getElementById("popup").style.top = "0px";
     document.getElementById("popup").style.left = "0px";

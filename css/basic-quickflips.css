@@ -12,15 +12,15 @@
 }
 
 .quickFlip .blackPanel{
-    background-color: #FFD993;
-    color: darkorange;
-    border: 1px outset #A61C14;
+    background-color: #FFE4E1;
+    color: #8B7E66;
+    border: 4px outset #FF6A6A;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 }
 
 .quickFlip .redPanel{
-    background-color: #75941f;
+    background-color: #5F9EA0;
     color: #FFF;
     border: 1px outset #4f6417;
     -moz-border-radius: 8px;
