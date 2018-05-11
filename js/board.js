@@ -72,14 +72,29 @@ function initBoard()
     document.getElementById("shield").style.top = top+"px";
 
     for(var i=0;i<52;i++){
-        if(i!=21){
+        if(i!=21&&square[i].groupNumber!=0&&square[i].groupNumber!=1&&square[i].groupNumber!=2){
         var cell = document.getElementById("cell" +i);
-        var hpid = "holder"+i;
             cell.innerHTML +=
                 "<div class='cellinnerwrap'>" +
                     "<div class='owenerholder' id='owenerholder"+i+"'></div>" +
                     "<div class='innerSquare' onmousemove='mouse("+i+")' style='border: 5px solid "+square[i].color+"'>"+square[i].name+"</div>" +
                     "<div class='holderposition' id='holder"+i+"'></div>" +
+                "</div>";
+        }else if(i!=21&&(square[i].groupNumber==0||square[i].groupNumber==2)){
+            var cell = document.getElementById("cell" +i);
+            cell.innerHTML +=
+                "<div class='cellinnerwrap' onmousemove='mouse("+i+")'>" +
+                "<div class='owenerholder' id='owenerholder"+i+"' style='margin: 2px'>"+square[i].name+"</div>" +
+                "<div class='innerSquare' style='background: url("+square[i].color+") no-repeat center; background-size: 90% 110%; width: 100%; '></div>" +
+                "<div class='holderposition' id='holder"+i+"'></div>" +
+                "</div>";
+        }else if(square[i].groupNumber==1){
+            var cell = document.getElementById("cell" +i);
+            cell.innerHTML +=
+                "<div class='cellinnerwrap' onmousemove='mouse("+i+")'>" +
+                "<div class='owenerholder' id='owenerholder"+i+"' style='margin: 2px'></div>" +
+                "<div class='innerSquare' style='background: url("+square[i].color+") no-repeat center; background-size: 90% 110%; width: 100%;color:lavender'>"+square[i].name+"</div>" +
+                "<div class='holderposition' id='holder"+i+"'></div>" +
                 "</div>";
         }
     }
@@ -900,12 +915,10 @@ function land()
             switch (p.position){
                 case 4:
                     game.addMoney(-140,p.id);
-                    // popup(p.position,2);
                     toast(p.name+" 到达拉斯维加斯，缴纳了$140赌资.","#000000",1);
                     break;
                 case 12:
                     game.addMoney(-50,p.id);
-                    // popup(p.position,2);
                     toast(p.name+" 到达免税店，花费$50购物.","#000000",1);
                     break;
                 case 15:
@@ -914,12 +927,10 @@ function land()
                             game.addMoney(-40,player[i].id);
                     }
                     game.addMoney((pcount-1)*40,p.id);
-                    // popup(p.position,2);
                     toast(p.name+" 到达WTO，贸易频繁，资金流转不周，向其他每个玩家收取 $40 ,共获得 $"+(pcount-1)*40,"#000000",1);
                     break;
                 case 20:
                     game.addMoney(50,p.id);
-                    // popup(p.position,2);
                     toast(p.name+" 到达免费停车场，捡到$50.","#000000",1);
                     break;
                 case 36:
