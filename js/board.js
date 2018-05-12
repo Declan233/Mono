@@ -57,6 +57,22 @@ app.controller("moneybar",function ($scope,$interval)
             info.style.borderColor = playersinfo.pops[i].split(": ")[0];
         }
 
+        setTimeout(function () {
+            for (var i=1;i<53;i++){
+                if(playersinfo.squares[i].split(" ")[2]!=-1){//owned
+                    square[i-1].owner = playersinfo.squares[i].split(" ")[2];
+                    square[i-1].level = playersinfo.squares[i].split(" ")[3];
+                    document.getElementById("owenerholder" + (i-1)).style.border = "2px solid " + player[getIndexbyId(square[i-1].owner)].color;
+                    if(square[i-1].groupNumber!=1)
+                        document.getElementById("owenerholder" + (i-1)).innerText = "Level "+square[i-1].level;
+                    else
+                        document.getElementById("owenerholder" + (i-1)).innerText = player[getIndexbyId(square[i-1].owner)].name;
+                }
+            }
+        },500);
+        setTimeout(function () {
+                updatePosition(0, player[0].position);
+        },500);
     }
 
     $scope.ps = player;
@@ -120,7 +136,7 @@ function initBoard()
             var cell = document.getElementById("cell" +i);
             cell.innerHTML +=
                 "<div class='cellinnerwrap' onmousemove='mouse("+i+")'>" +
-                "<div class='owenerholder' id='owenerholder"+i+"' style='margin: 2px'></div>" +
+                "<div class='owenerholder' id='owenerholder"+i+"'></div>" +
                 "<div class='innerSquare' style='background: url("+square[i].color+") no-repeat center; background-size: 90% 110%; width: 100%;color:lightgoldenrodyellow'>"+square[i].name+"</div>" +
                 "<div class='holderposition' id='holder"+i+"'></div>" +
                 "</div>";
