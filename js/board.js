@@ -53,9 +53,7 @@ app.controller("moneybar",function ($scope,$interval)
                 player[i].position = "20_5";
             else
                 player[i].position = parseInt(playersinfo.players[i].position);
-            if (playersinfo.players[i].jail=="false")
-                player[i].jail = false;
-            else
+            if (playersinfo.players[i].jail=="true")
                 player[i].jail = true;
             player[i].jailroll = parseInt(playersinfo.players[i].jailroll);
             player[i].JailCard = parseInt(playersinfo.players[i].JailCard);
