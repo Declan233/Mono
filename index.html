@@ -8,6 +8,7 @@
 	<script type="text/javascript"  src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script type="text/javascript" src="js/json2.js"></script>
+	<script type="text/javascript" src="js/file.js"></script>
 	<style type="text/css"> @import url(css/index.css); </style>
 
 	<link rel="stylesheet"
@@ -31,7 +32,7 @@ function startgame(){
     playinfo.players = [];//[{},{},{}...]
     var wrap,intel=-1;
     for(var i=0;i<playernum;i++){
-		playinfo.players[i] = {};//{color:"",name,"",human,""}
+		playinfo.players[i] = {};//{color:"",name,""}
 		wrap = $("div#player"+(i+1)+"wrap");
 		intel = wrap.find("select.player-intel").val();
 
@@ -40,7 +41,7 @@ function startgame(){
 		playinfo.players[i].token = wrap.find("select.player-token").val();
 
     }
-
+    playinfo.rload = false;
     sessionStorage.setItem("playinfo", JSON.stringify(playinfo));
 
     window.self.location = "gameBoard.html";

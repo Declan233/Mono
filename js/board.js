@@ -31,6 +31,34 @@ app.controller("moneybar",function ($scope,$interval)
     for (var i = 0; i < pcount; i++)
         player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token,i);
 
+
+    if(playersinfo.rload==true) {
+        console.log(playersinfo);
+        for (var i = 0; i < pcount; i++) {
+            player[i].id = parseInt(playersinfo.players[i].id);
+            player[i].money = parseInt(playersinfo.players[i].money);
+            if(playersinfo.players[i].position=="20_5")
+                player[i].position = "20_5";
+            else
+                player[i].position = parseInt(playersinfo.players[i].position);
+            if (playersinfo.players[i].jail=="false")
+                player[i].jail = false;
+            else
+                player[i].jail = true;
+            player[i].jailroll = parseInt(playersinfo.players[i].jailroll);
+            player[i].JailCard = parseInt(playersinfo.players[i].JailCard);
+        }
+
+        for (var i=1;i<playersinfo.pops.length-1;i++) {
+            var disarea = document.getElementById("displayInfo");
+            var info = disarea.appendChild(document.createElement("p"));
+            info.className = "triangle-obtuse";
+            info.innerText = playersinfo.pops[i].split(": ")[1];
+            info.style.borderColor = playersinfo.pops[i].split(": ")[0];
+        }
+
+    }
+
     $scope.ps = player;
 
     $interval(function(){
@@ -93,7 +121,7 @@ function initBoard()
             cell.innerHTML +=
                 "<div class='cellinnerwrap' onmousemove='mouse("+i+")'>" +
                 "<div class='owenerholder' id='owenerholder"+i+"' style='margin: 2px'></div>" +
-                "<div class='innerSquare' style='background: url("+square[i].color+") no-repeat center; background-size: 90% 110%; width: 100%;color:lavender'>"+square[i].name+"</div>" +
+                "<div class='innerSquare' style='background: url("+square[i].color+") no-repeat center; background-size: 90% 110%; width: 100%;color:lightgoldenrodyellow'>"+square[i].name+"</div>" +
                 "<div class='holderposition' id='holder"+i+"'></div>" +
                 "</div>";
         }
@@ -114,8 +142,6 @@ function initPlayers()
 
     }
 
-    //继续游戏
-    // play();
 }
 
 //显示当前房产结果
@@ -795,7 +821,6 @@ function updatePosition(start,end)
                 "<span class='glyphicon glyphicon-"+ player[turn].token +"' title='" + player[turn].name + "' aria-hidden='true' style='color: " + player[turn].color + ";'></span>";
         }
 
-        // console.log(player[turn].name+":\n"+p1_top+"  "+p1_left+"\n"+p2_top+"  "+p2_left);
 
     }
 
