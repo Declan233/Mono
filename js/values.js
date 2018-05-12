@@ -41,7 +41,7 @@ function Square(name, pricetext, color, price, groupNumber, rent0, rent1, rent2,
 	}
 
     this.getString = function (square){
-        return square.name+" "+square.owner+" "+square.level+" "+square.mortgage+" "+square.price+"\n";
+        return square.name+" "+square.owner+" "+square.level+" "+square.mortgage+" "+square.rent0+"\n";
     }
 }
 

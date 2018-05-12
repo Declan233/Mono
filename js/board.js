@@ -33,8 +33,20 @@ app.controller("moneybar",function ($scope,$interval)
 
 
     if(playersinfo.rload==true) {
+
+        $('#loadbackground').show();
+        $('#shclProgress').shCircleLoader();
+        var i = 0;
+        setInterval(function() {
+            $('#shclProgress').shCircleLoader('progress', i + '%');
+            if (++i > 100) {
+                $('#shclProgress').hide();
+                $('#loadbackground').hide();
+            }
+        }, 30);
+
         console.log(playersinfo);
-        for (var i = 0; i < pcount; i++) {
+        for (i = 0; i < pcount; i++) {
             player[i].id = parseInt(playersinfo.players[i].id);
             player[i].money = parseInt(playersinfo.players[i].money);
             if(playersinfo.players[i].position=="20_5")
@@ -49,7 +61,7 @@ app.controller("moneybar",function ($scope,$interval)
             player[i].JailCard = parseInt(playersinfo.players[i].JailCard);
         }
 
-        for (var i=1;i<playersinfo.pops.length-1;i++) {
+        for (i=1;i<playersinfo.pops.length-1;i++) {
             var disarea = document.getElementById("displayInfo");
             var info = disarea.appendChild(document.createElement("p"));
             info.className = "triangle-obtuse";
@@ -58,10 +70,20 @@ app.controller("moneybar",function ($scope,$interval)
         }
 
         setTimeout(function () {
-            for (var i=1;i<53;i++){
+            for (i=1;i<53;i++){
                 if(playersinfo.squares[i].split(" ")[2]!=-1){//owned
                     square[i-1].owner = playersinfo.squares[i].split(" ")[2];
                     square[i-1].level = playersinfo.squares[i].split(" ")[3];
+                    if (playersinfo.squares[i].split(" ")[4]=="true")
+                        square[i-1].mortgage = true;
+                    if (parseInt(playersinfo.squares[i].split(" ")[5])>square[i-1].rent0) {
+                        square[i-1].rent0 = parseInt(playersinfo.squares[i].split(" ")[5]);
+                        square[i-1].rent1 *= 1.1;
+                        square[i-1].rent2 *= 1.1;
+                        square[i-1].rent3 *= 1.1;
+                        square[i-1].rent4 *= 1.1;
+                    }
+
                     document.getElementById("owenerholder" + (i-1)).style.border = "2px solid " + player[getIndexbyId(square[i-1].owner)].color;
                     if(square[i-1].groupNumber!=1)
                         document.getElementById("owenerholder" + (i-1)).innerText = "Level "+square[i-1].level;

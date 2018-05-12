@@ -446,6 +446,24 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 	z-index: 10;
 }
 
+#loadbackground {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background-color: lightcyan;
+	opacity: 0.96;
+	display: none;
+	z-index: 15;
+}
+#shclProgress{
+	position: absolute;
+	margin: auto;
+	top:300px;
+	z-index: 16;
+}
+
 
 #popup {
 	width: 300px;
@@ -547,3 +565,4 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 	position: absolute;
 	z-index: 10;
 }
+
