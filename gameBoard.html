@@ -24,24 +24,25 @@
         $(function() {
             $('.quickFlip').quickFlip();
         });
+
 	</script>
+
 
 	<link rel="stylesheet" type="text/css" href="css/basic-quickflips.css" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.toast.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.shCircleLoader.css">
+	<script type="text/javascript" src="js/jquery.shCircleLoader-min.js"></script>
 	<script type="text/javascript" src="js/jquery.toast.js"></script>
 	<script type="text/javascript" src="js/FileSaver.js"></script>
-	<script type="text/javascript" src="js/jquery.shCircleLoader-min.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/jquery.shCircleLoader.css" />
+
+	<script type="text/javascript" src="js/mini.js"></script>
 
 
+	<title>Board</title>
 
-<title>Board</title>
 </head>
-<script>
-	
-</script>
 <body ng-app="myApp">
-	<div class="container">
+	<div class="container" style="margin-bottom: 40px">
 		<table class="col-md-12" id="board" >
 			<tr>
 				<td class="cell col-md-1" id="cell30"></td>
@@ -287,6 +288,51 @@
 
 
 	<span id="movingicon" aria-hidden='true'></span>
+
+
+	<style>
+		.popBtn{margin-right:10px; width:18px; height:18px; cursor:pointer; float:right; margin-left:1px; margin-top:12px; display:inline; background:url(./image/buttons.png) no-repeat;}
+		.popShow{background-position:0px 0}
+		.popShow:hover{background-position:0px -20px}
+		.popHide{background-position:-19px 0}
+		.popHide:hover{background-position:-19px -20px}
+	</style>
+	<script type="text/javascript">
+        function showDiv(innerCall){
+            if(document.getElementById('PcPoPmarket')==null)return;
+            document.getElementById('PcPoPmarket').style.width = 350+'px';
+            document.getElementById('PcPoPmarket').style.height = 300+'px';
+            document.getElementById('showvod').style.display = 'none';
+            document.getElementById('hidevod').style.display = 'block';
+            var lmt = document.getElementById('popFrame').contentWindow.document.getElementById('lmt');
+            if(lmt!=null){
+                lmt.style.backgroundImage = 'url(./image/bg_open.png)';
+            }
+        }
+
+        function hideDiv(innerCall){
+            if(document.getElementById('PcPoPmarket')==null)return;
+
+            document.getElementById('PcPoPmarket').style.width = 226 + 'px';
+            document.getElementById('PcPoPmarket').style.height = 37 + 'px';
+            document.getElementById('hidevod').style.display = 'none';
+            document.getElementById('showvod').style.display = 'block';
+            var lmt = document.getElementById('popFrame').contentWindow.document.getElementById('lmt');
+            if(lmt!=null){
+                lmt.style.backgroundImage = 'url(./image/bg_min.png)';
+            }
+        }
+	</script>
+
+	<span id="tmpAreaLmtDiv">
+		<div style="z-index: 1000; right: 0px; bottom: 0px; overflow-x: hidden; overflow-y: hidden; position: fixed; width: 350px; height: 300px; " id="PcPoPmarket">
+			<div id="popTop" style="z-index:1000; POSITION: absolute; right:0; height:30px; overflow:hidden;">
+				<span class="popBtn popShow" onclick="showDiv()" id="showvod" style="display: none; "></span>
+				<span class="popBtn popHide" onclick="hideDiv()" id="hidevod" style="display: block; "></span>
+			</div>
+			<iframe id="popFrame" scrolling="no" frameborder="0" width="350" allowtransparency="true" height="300" src="poppage.html" target="_blank">-</iframe>
+		</div>
+	</span>
 
 
 

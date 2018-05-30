@@ -1,4 +1,5 @@
 
+
 window.onload = function() {
     initBoard();
     initPlayers();
@@ -30,7 +31,6 @@ app.controller("moneybar",function ($scope,$interval)
 {
     for (var i = 0; i < pcount; i++)
         player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token,i);
-
 
     if(playersinfo.rload==true) {
 
@@ -860,6 +860,7 @@ function updatePosition(start,end)
 
     }
 
+    setHotSpot();
 
 }
 
@@ -997,11 +998,13 @@ function land()
                 case 36:
                     rate = 1.1;round2=2;
                     // popup(p.position,2);
+                    toast(p.name+" 到达香港，所有房产租金连续三回合提升10%.");
                     toast(p.name+" 到达香港，所有房产租金连续三回合提升10%.","#000000",1);
                     break;
                 case 50:
                     dir=-1;round=2;
                     // popup(p.position,2);
+                    infoDisplay(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.");
                     toast(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.","#000000",1);
                     break;
             }
@@ -1783,7 +1786,6 @@ function raiserent() {
             infoDisplay(player[square[42].owner].name+" 齐集了淡紫房产，淡紫房产全体房租增加10%！");
         }
 }
-
 
 
 
