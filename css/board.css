@@ -455,13 +455,13 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
 	background-color: lightcyan;
 	opacity: 0.96;
 	display: none;
-	z-index: 15;
+	z-index: 29;
 }
 #shclProgress{
 	position: absolute;
 	margin: auto;
 	top:300px;
-	z-index: 16;
+	z-index: 30;
 }
 
 
