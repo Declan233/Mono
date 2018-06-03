@@ -5,12 +5,11 @@
 <title></title>
 <base target="_blank" />
   <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/jquery.hotspot.css">
   <script type="text/javascript" src="js/modernizr.custom.49511.js"></script>
-  <script type="text/javascript" src="js/jquery.hotspot.min.js"></script>
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
-
+  <script type="text/javascript" src="js/angular.js"></script>
+  <script type="text/javascript" src="js/angular-sanitize.js"></script>
   <script type="text/javascript" src="js/mini.js"></script>
 <style>
   *{ margin:0;padding:0;font-size:12px; list-style: none;}
@@ -28,745 +27,124 @@
   #lmt .top a:hover span,#lmt .top a:hover{color:#f60; text-decoration:underline}
   #lmt .body_r {padding-left:10px;text-align:left;width:100%;overflow:hidden; float: left; margin: 0 auto;}
   #lmt .body_r em, #lmt .body_r em a{color:#777}
+  .bbt { position: absolute; top:80px; text-align: center; border-color:#0094ff; border-collapse: collapse; opacity: 0.7}
+  .bbt td{
+    padding: 1px;
+  }
   .minisqure{width: 27px ;height: 25px; border: 1px solid darkgray;}
+  .spp{display:block;}
+
 </style>
-
-
-  <script type="text/javascript">
-      function pop2(){
-          $('#cont').hotSpot({slideshow : false, triggerBy : 'click', autoHide : false});
-      }
-      setInterval(pop2,1000);
-  </script>
 
 </head>
 <body>
 <div id="ivy_div" style="display: none;"></div>
-<div id="lmt">
+<div id="lmt" ng-app="innerApp">
   <div class="top"><a href="" title=""><span> 迷你地图</span></a></div>
   <div class="body_r">
 
-    <div class="container2" id="cont" >
-      <div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">
-        <div class="popover-inner">
-          <h3 class="popover-title">到达玩家</h3>
-          <div class="popover-content">
-            <p>玩家1</p>
-          </div>
-        </div>
-      </div>
-      <img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >
-    </div>
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" >
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" ng-controller="miniLoc" >
       <tr>
-        <td id="mini30" class="minisqure "></td>
-        <td id="mini31" class="minisqure "></td>
-        <td id="mini32" class="minisqure "></td>
-        <td id="mini33" class="minisqure "></td>
-        <td id="mini34" class="minisqure "></td>
+        <td id="mini30" class="minisqure " ng-bind-html="here(30)"></td>
+        <td id="mini31" class="minisqure " ng-bind-html="here(31)"></td>
+        <td id="mini32" class="minisqure " ng-bind-html="here(32)"></td>
+        <td id="mini33" class="minisqure " ng-bind-html="here(33)"></td>
+        <td id="mini34" class="minisqure " ng-bind-html="here(34)"></td>
         <td colspan="2" class=""></td>
-        <td id="mini39" class="minisqure "></td>
-        <td id="mini40" class="minisqure "></td>
-        <td id="mini41" class="minisqure "></td>
-        <td id="mini42" class="minisqure "></td>
-        <td id="mini43" class="minisqure "></td>
+        <td id="mini39" class="minisqure " ng-bind-html="here(39)"></td>
+        <td id="mini40" class="minisqure " ng-bind-html="here(40)"></td>
+        <td id="mini41" class="minisqure " ng-bind-html="here(41)"></td>
+        <td id="mini42" class="minisqure " ng-bind-html="here(42)"></td>
+        <td id="mini43" class="minisqure " ng-bind-html="here(43)"></td>
       </tr>
       <tr>
-        <td id="mini29" class="minisqure "></td>
+        <td id="mini29" class="minisqure " ng-bind-html="here(29)"></td>
         <td colspan="3" class=""></td>
-        <td id="mini35" class="minisqure "></td>
-        <td id="mini36" class="minisqure "></td>
-        <td id="mini37" class="minisqure "></td>
-        <td id="mini38" class="minisqure "></td>
+        <td id="mini35" class="minisqure " ng-bind-html="here(35)"></td>
+        <td id="mini36" class="minisqure " ng-bind-html="here(36)"></td>
+        <td id="mini37" class="minisqure " ng-bind-html="here(37)"></td>
+        <td id="mini38" class="minisqure " ng-bind-html="here(38)"></td>
         <td colspan="3" class=""></td>
-        <td id="mini44" class="minisqure "></td>
+        <td id="mini44" class="minisqure " ng-bind-html="here(44)"></td>
       </tr>
       <tr>
-        <td id="mini28" class="minisqure "></td>
-        <td colspan="10" class=""></td>
-        <td id="mini45" class="minisqure "></td>
+        <td id="mini28" class="minisqure " ng-bind-html="here(28)"></td>
+        <td colspan="3" rowspan="6" style="padding: 2px">
+          <table class="bbt" border="1">
+            <tr>
+              <td></td>
+              <td>玩家名</td>
+              <td>位置</td>
+            </tr>
+            <tr ng-repeat="pp in pps track by $index">
+              <td><span style="float: right;width: 8px;height: 8px;background: {{ nan[$index] }};"></span></td>
+              <td>{{ nic[$index]}}</td>
+              <td>{{pp}}</td>
+            </tr>
+          </table>
+        </td>
+        <td colspan="4" rowspan="2" class=""></td>
+        <td colspan="3" rowspan="6" class=""></td>
+        <td id="mini45" class="minisqure " ng-bind-html="here(45)"></td>
       </tr>
       <tr>
-        <td id="mini27" class="minisqure "></td>
-        <td colspan="10" class=""></td>
-        <td id="mini46" class="minisqure "></td>
+        <td id="mini27" class="minisqure " ng-bind-html="here(27)"></td>
+        <td id="mini46" class="minisqure " ng-bind-html="here(46)"></td>
       </tr>
       <tr>
-        <td id="mini26" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini12" class="minisqure "></td>
-        <td id="mini11" class="minisqure "></td>
-        <td id="mini10" class="minisqure "></td>
-        <td id="mini9" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini47" class="minisqure "></td>
+        <td id="mini26" class="minisqure " ng-bind-html="here(26)"></td>
+        <td id="mini12" class="minisqure " ng-bind-html="here(12)"></td>
+        <td id="mini11" class="minisqure " ng-bind-html="here(11)"></td>
+        <td id="mini10" class="minisqure " ng-bind-html="here(10)"></td>
+        <td id="mini9" class="minisqure " ng-bind-html="here(9)"></td>
+        <td id="mini47" class="minisqure " ng-bind-html="here(47)"></td>
       </tr>
       <tr>
-        <td id="mini25" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini13" class="minisqure "></td>
+        <td id="mini25" class="minisqure " ng-bind-html="here(25)"></td>
+        <td id="mini13" class="minisqure " ng-bind-html="here(13)"></td>
         <td colspan="2" class=""></td>
-        <td id="mini8" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini48" class="minisqure "></td>
+        <td id="mini8" class="minisqure " ng-bind-html="here(8)"></td>
+        <td id="mini48" class="minisqure " ng-bind-html="here(48)"></td>
       </tr>
       <tr>
-        <td id="mini24" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini14" class="minisqure "></td>
+        <td id="mini24" class="minisqure " ng-bind-html="here(24)"></td>
+        <td id="mini14" class="minisqure " ng-bind-html="here(14)"></td>
         <td colspan="2" class=""></td>
-        <td id="mini7" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini49" class="minisqure "></td>
+        <td id="mini7" class="minisqure " ng-bind-html="here(7)"></td>
+        <td id="mini49" class="minisqure " ng-bind-html="here(49)"></td>
       </tr>
       <tr>
-        <td id="mini23" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini15" class="minisqure "></td>
+        <td id="mini23" class="minisqure " ng-bind-html="here(23)"></td>
+        <td id="mini15" class="minisqure " ng-bind-html="here(15)"></td>
         <td colspan="2" class=""></td>
-        <td id="mini6" class="minisqure "></td>
-        <td colspan="3" class=""></td>
-        <td id="mini50" class="minisqure "></td>
+        <td id="mini6" class="minisqure " ng-bind-html="here(6)"></td>
+        <td id="mini50" class="minisqure " ng-bind-html="here(50)"></td>
       </tr>
       <tr>
-        <td id="mini22" class="minisqure "></td>
+        <td id="mini22" class="minisqure " ng-bind-html="here(22)"></td>
         <td colspan="3" class=""></td>
-        <td id="mini16" class="minisqure "></td>
+        <td id="mini16" class="minisqure " ng-bind-html="here(16)"></td>
         <td colspan="2" class=""></td>
-        <td id="mini5" class="minisqure "></td>
+        <td id="mini5" class="minisqure " ng-bind-html="here(5)"></td>
         <td colspan="3" class=""></td>
-        <td id="mini51" class="minisqure "></td>
+        <td id="mini51" class="minisqure " ng-bind-html="here(51)"></td>
       </tr>
       <tr>
-        <td id="mini21" class="minisqure "></td>
-        <td id="mini20" class="minisqure "></td>
-        <td id="mini19" class="minisqure "></td>
-        <td id="mini18" class="minisqure "></td>
-        <td id="mini17" class="minisqure "></td>
+        <td id="mini21" class="minisqure " ng-bind-html="here(21)"></td>
+        <td id="mini20" class="minisqure " ng-bind-html="here(20)"></td>
+        <td id="mini19" class="minisqure " ng-bind-html="here(19)"></td>
+        <td id="mini18" class="minisqure " ng-bind-html="here(18)"></td>
+        <td id="mini17" class="minisqure " ng-bind-html="here(17)"></td>
         <td colspan="2" class=""></td>
-        <td id="mini4" class="minisqure "></td>
-        <td id="mini3" class="minisqure "></td>
-        <td id="mini2" class="minisqure "></td>
-        <td id="mini1" class="minisqure "></td>
-        <td id="mini0" class="minisqure "></td>
+        <td id="mini4" class="minisqure " ng-bind-html="here(4)"></td>
+        <td id="mini3" class="minisqure " ng-bind-html="here(3)"></td>
+        <td id="mini2" class="minisqure " ng-bind-html="here(2)"></td>
+        <td id="mini1" class="minisqure " ng-bind-html="here(1)"></td>
+        <td id="mini0" class="minisqure " ng-bind-html="here(0)"></td>
       </tr>
     </table>
 
-    <!--<table width="100%" border="0" cellspacing="0" cellpadding="0" >-->
-      <!--<tr>-->
-        <!--<td id="mini30" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini31" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini32" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini33" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini34" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="2" class=""></td>-->
-        <!--<td id="mini39" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini40" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini41" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini42" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini43" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini29" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini35" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini36" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini37" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini38" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini44" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini28" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="10" class=""></td>-->
-        <!--<td id="mini45" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini27" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="10" class=""></td>-->
-        <!--<td id="mini46" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini26" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini12" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini11" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini10" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini9" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini47" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini25" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini13" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="2" class=""></td>-->
-        <!--<td id="mini8" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini48" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini24" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini14" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="2" class=""></td>-->
-        <!--<td id="mini7" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini49" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini23" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini15" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="2" class=""></td>-->
-        <!--<td id="mini6" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini50" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini22" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini16" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="2" class=""></td>-->
-        <!--<td id="mini5" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="3" class=""></td>-->
-        <!--<td id="mini51" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-      <!--<tr>-->
-        <!--<td id="mini21" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini20" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini19" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini18" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini17" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td colspan="2" class=""></td>-->
-        <!--<td id="mini4" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini3" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini2" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini1" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-        <!--<td id="mini0" class="minisqure ">-->
-          <!--<div class="cont container2" >-->
-            <!--<div class="popover innertop" data-easein="cardInTop" data-easeout="cardOutTop" id="pop5">-->
-              <!--<div class="popover-inner">-->
-                <!--<h3 class="popover-title">到达玩家</h3>-->
-                <!--<div class="popover-content"></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<img src="./image/arrow2.png" alt="info" class="info-icon info-icon1" data-target="pop5"  >-->
-          <!--</div>-->
-        <!--</td>-->
-      <!--</tr>-->
-    <!--</table>-->
 
   </div>
   <div class="clear"></div>

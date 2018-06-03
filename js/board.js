@@ -856,12 +856,7 @@ function updatePosition(start,end)
             document.getElementById("holder" + end).innerHTML +=
                 "<span class='glyphicon glyphicon-"+ player[turn].token +"' title='" + player[turn].name + "' aria-hidden='true' style='color: " + player[turn].color + ";'></span>";
         }
-
-
     }
-
-    setHotSpot();
-
 }
 
 
