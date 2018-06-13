@@ -13,7 +13,7 @@
   <script type="text/javascript" src="js/mini.js"></script>
 <style>
   *{ margin:0;padding:0;font-size:12px; list-style: none;}
-  body{font-size:12px;color:#333;font-weight:normal;font-family:5B8B4F53;  }
+  body{font-size:12px;color:#333;font-weight:normal;font-family:B8B4F53;  }
   img {border:0; display:block; clear:both;}
   i, em { font-style:normal; }
   /* link */
@@ -27,12 +27,13 @@
   #lmt .top a:hover span,#lmt .top a:hover{color:#f60; text-decoration:underline}
   #lmt .body_r {padding-left:10px;text-align:left;width:100%;overflow:hidden; float: left; margin: 0 auto;}
   #lmt .body_r em, #lmt .body_r em a{color:#777}
-  .bbt { position: absolute; top:80px; text-align: center; border-color:#0094ff; border-collapse: collapse; opacity: 0.7}
+  .bbt {position: fixed;z-index: 22; top:80px; text-align: center; border-color:#0094ff; border-collapse: collapse; opacity: 0.4}
   .bbt td{
     padding: 1px;
   }
+
   .minisqure{width: 27px ;height: 25px; border: 1px solid darkgray;}
-  .spp{display:block;}
+  .spp{display:block;margin-bottom:1px;z-index: 25;}
 
 </style>
 
@@ -78,9 +79,12 @@
               <td>位置</td>
             </tr>
             <tr ng-repeat="pp in pps track by $index">
-              <td><span style="float: right;width: 8px;height: 8px;background: {{ nan[$index] }};"></span></td>
-              <td>{{ nic[$index]}}</td>
-              <td>{{pp}}</td>
+              <td ng-if="$even" style="background-color:#E1FFFF"><span style="float: right;width: 8px;height: 8px;background: {{ nan[$index] }};"></span></td>
+              <td ng-if="$odd" style="background-color:#F0FFF0"><span style="float: right;width: 8px;height: 8px;background: {{ nan[$index] }};"></span></td>
+              <td ng-if="$even" style="background-color:#E1FFFF">{{ nic[$index]}}</td>
+              <td ng-if="$odd" style="background-color:#F0FFF0">{{ nic[$index]}}</td>
+              <td ng-if="$even" style="background-color:#E1FFFF">{{pp}}</td>
+              <td ng-if="$odd" style="background-color:#F0FFF0">{{pp}}</td>
             </tr>
           </table>
         </td>
