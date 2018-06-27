@@ -33,7 +33,7 @@ app.controller("moneybar",function ($scope,$interval)
         player[i] = new Player(playersinfo.players[i].name, playersinfo.players[i].color,playersinfo.players[i].token,i);
 
     if(playersinfo.rload==true) {
-
+        // console.log(square);
         $('#loadbackground').show();
         $('#shclProgress').shCircleLoader();
         var i = 0;
@@ -70,8 +70,8 @@ app.controller("moneybar",function ($scope,$interval)
         setTimeout(function () {
             for (i=1;i<53;i++){
                 if(playersinfo.squares[i].split(" ")[2]!=-1){//owned
-                    square[i-1].owner = playersinfo.squares[i].split(" ")[2];
-                    square[i-1].level = playersinfo.squares[i].split(" ")[3];
+                    square[i-1].owner = parseInt(playersinfo.squares[i].split(" ")[2]);
+                    square[i-1].level = parseInt(playersinfo.squares[i].split(" ")[3]);
                     if (playersinfo.squares[i].split(" ")[4]=="true")
                         square[i-1].mortgage = true;
                     if (parseInt(playersinfo.squares[i].split(" ")[5])>square[i-1].rent0) {
@@ -81,7 +81,6 @@ app.controller("moneybar",function ($scope,$interval)
                         square[i-1].rent3 *= 1.1;
                         square[i-1].rent4 *= 1.1;
                     }
-
                     document.getElementById("owenerholder" + (i-1)).style.border = "2px solid " + player[getIndexbyId(square[i-1].owner)].color;
                     if(square[i-1].groupNumber!=1)
                         document.getElementById("owenerholder" + (i-1)).innerText = "Level "+square[i-1].level;
@@ -444,7 +443,7 @@ function cfmortage(index)
 
 function unmortage(index)
 {
-    var fare = square[index].price/2+square[index].level*(square[index].houseprice/2);
+    var fare = parseInt(square[index].price/2+square[index].level*(square[index].houseprice/2));
     fare = parseInt(fare*1.1);
     game.addMoney(-fare,player[turn].id);
     square[index].mortgage = false;
@@ -566,10 +565,8 @@ function Game()
             case 4:
                 rent = s.rent4;
                 break;
-            case 5:
-                rent = s.rent5;
-                break;
         }
+        console.log(s.level+" "+s.rent1+" "+rent+" "+rate);
         rent = parseInt(rent*rate);
         if(p.id!=square[25].owner||round3==0){
         game.addMoney(-rent,p.id);
@@ -1070,6 +1067,8 @@ function land() {
             if (p.position==35) {
                 popup(p.position,2);
                 game.goToJail();
+            }else if(p.position==20){
+                popup(p.position,2);
             }else
                 game.pickCard();
             break;
