@@ -145,7 +145,5 @@ function reAssign(ins){
     sessionStorage.removeItem("playinfo");
     sessionStorage.setItem("playinfo", JSON.stringify(playinfo));
 
-
     window.self.location = "gameBoard.html";
-
 }

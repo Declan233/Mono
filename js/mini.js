@@ -3,7 +3,6 @@
 var app = angular.module('innerApp', ['ngSanitize']);
 app.controller("miniLoc",function ($scope, $interval, $sce)
 {
-
     var pls = window.parent.player;
     var pos = [];
     var nan = [];
@@ -28,14 +27,11 @@ app.controller("miniLoc",function ($scope, $interval, $sce)
     $scope.here = function (position) {
         var str = '';
         for (var j=0;j<pos.length;j++){
-            if(pos[j]==position){
-                // str += nan[j];
+            if(pos[j]==position)
                 str += '<span class="spp" style="border:2px solid '+nan[j]+';"></span>'
             }
-        }
         return $sce.trustAsHtml(str);
     }
-
 })
 
 

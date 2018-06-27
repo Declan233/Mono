@@ -302,7 +302,7 @@ function trade()
     for(var i=0;i<pcount;i++) {
         if (player[i].id != p.id && player[i].JailCard > 0)
             htmlb += "<tr><td class='mbtn'><input type=\"radio\" name=\"radio2\" value='100' /></td><td></td><td>免费出狱卡</td>" +
-                "<td class='mname2'>" + player[i].name + "</td><td>" + p.JailCard + "张</td></tr>";
+                "<td class='mname2'>" + player[i].name + "</td><td>" + player[i].JailCard + "张</td></tr>";
         b+=1;
     }
 
@@ -350,11 +350,19 @@ function sellpropose()
     var pid = $("#selectplayer").val();
     if(isNaN(f)) {alert("请选择一个房产或者出狱卡进行出售");return;}
     if(!(m>0)) {alert("请输入出售价格");return;}
-    infoDisplay(player[turn].name+" 向 "+player[getIndexbyId(pid)].name+" 发起出售交易：$"+m+" 出售 "+square[f].name,"black",2,player[turn].id,pid,f,m);
+    if(f<100)
+        infoDisplay(player[turn].name+" 向 "
+            +player[getIndexbyId(pid)].name+" 发起出售交易：$"+m+" 出售 "
+            +square[f].name,"black",2,player[turn].id,pid,f,m);
+    else
+        infoDisplay(player[turn].name+" 向 "
+            +player[getIndexbyId(pid)].name+" 发起出售交易：$"+m+" 出售免费出狱卡 "
+            ,"black",2,player[turn].id,pid,f,m);
 
     $("#popupwrap").hide();
     $("#popupbackground").fadeOut(400);
 }
+
 
 function buypropose()
 {
@@ -363,9 +371,12 @@ function buypropose()
     if(isNaN(f)) {alert("请选择一个房产或者出狱卡购买");return;}
     if(!(m>0)) {alert("请输入购买价格");return;}
 
-    infoDisplay(player[turn].name+" 向 "+player[getIndexbyId(square[f].owner)].name+" 发起出售交易：$"+m+" 收购 "+square[f].name,"black",3,square[f].owner,player[turn].id,f,m);
-
-
+    if(f<100)
+        infoDisplay(player[turn].name+" 向 "+player[getIndexbyId(square[f].owner)].name+" 发起出售交易：$"+m+" 收购 "+square[f].name,"black",3,square[f].owner,player[turn].id,f,m);
+    else {
+        var wj = $("input[name='radio2']:checked").parents().children()[4].innerText;
+        infoDisplay(player[turn].name + " 向 " + wj + " 发起出售交易：$" + m + " 购买免费出狱卡 ", "black", 2, player[turn].id, player[turn].id, f, m);
+    }
 
     $("#popupwrap").hide();
     $("#popupbackground").fadeOut(400);
@@ -453,7 +464,6 @@ function Game()
     var die2;//骰子2
     var Rent;
 
-
     this.rollDice = function(){
         var dice1 = $("#dice1");
         var dice2 = $("#dice2");
@@ -522,7 +532,7 @@ function Game()
         } else {//继续游戏
             roll();
         }
-    };
+    };//掷骰子前的判断函数
 
     this.getDie = function(die) {
         if (die === 1) {
@@ -534,7 +544,7 @@ function Game()
 
     this.over = function () {
         popup(100,6);
-    }
+    };//游戏结束
 
     this.pay = function() {
         var p = player[turn];
@@ -569,7 +579,7 @@ function Game()
             infoDisplay("作为ORACLE的拥有者 "+p.name+" 该回合免税" );rent=0;
         }
         Rent = rent;
-    }
+    };//支付租金
 
     this.goToJail = function (){
         var p = player[turn];
@@ -610,9 +620,9 @@ function Game()
             $("#arrow"+(turn+1)).show();
         }
 
-    }
+    };//入狱
 
-    this.buy = function (position,id,type,trade) {
+    this.buy = function (position,id,type) {
         square[position].owner = id;
         document.getElementById("owenerholder" + position).style.border = "2px solid " + player[getIndexbyId(id)].color;
         if(type==0) {
@@ -629,28 +639,33 @@ function Game()
         }
         raiserent();
 
-    }
+    };//购买房产的函数
 
     this.addMoney = function (num,id) {
         player[getIndexbyId(id)].money += num;
-    }
+    };//修改现金余额的函数
 
     this.pickCard = function () {
-        var index = Math.floor(Math.random()*30);
-        // var index = 5;
+        var index = Math.floor(Math.random()*30);       //获取随机数
+        //得到运气卡
         var card = chanceCards[index];
-        $("#cc1").trigger("click");
+        //给显示的运气卡赋值
         var cc2 = document.getElementById("cc2");
         var cccontent = document.getElementById("cccontent");
         cc2.innerHTML = "运气卡 "+(index+1);
         cccontent.innerHTML = card.text;
-        infoDisplay(player[turn].name+" 抽到运气卡："+card.text);
-        card.action(player[turn]);
+        //翻转显示的运气卡
+        $("#cc1").trigger("click");
 
+        infoDisplay(player[turn].name+" 抽到运气卡："+card.text);
+
+        //执行运气卡功能
+        card.action(player[turn]);
+        //一段时间后，显示运气卡翻转回来
         setTimeout(function () {
             $("#cc2").trigger("click");
         },holdtime*3);
-    }
+    };//运气卡函数
     
     this.accountant = function (p) {
         var str,prop,comp,card;
@@ -677,7 +692,7 @@ function Game()
         if(p.JailCard>0)
             str += card;
         return str;
-    }
+    };//破产或胜利的总结资产函数
 
     this.JailCard = function () {
         var p = player[turn];
@@ -691,11 +706,11 @@ function Game()
 
             document.getElementById("popuptext").innerHTML +=
                 "<div>" +
-                "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"levelupyes\">使用</button>" +
-                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"levelupno\" >取消</button>" +
+                "<button type=\"button\" class='btn btn-success' value=\"Yes\" id=\"usecardyes\">使用</button>" +
+                "<button type=\"button\" class='btn btn-warning' value=\"No\" id=\"usecardno\" >取消</button>" +
                 "</div>";
 
-            $("#levelupyes").on("click", function () {
+            $("#usecardyes").on("click", function () {
                 p.JailCard--;
                 p.jail = false;
                 p.jailroll = 0;
@@ -709,7 +724,7 @@ function Game()
 
 
 
-        $("#levelupno").on("click", function () {
+        $("#usecardno").on("click", function () {
             $("#popupwrap").hide();
             $("#popupbackground").fadeOut(400);
         });
@@ -720,7 +735,7 @@ function Game()
             $("#popupwrap").show();
         });
 
-    }
+    };//使用出狱卡的函数
 
 }
 
@@ -853,9 +868,11 @@ function updatePosition(start,end)
         
         setTimeout(draw,holdtime);
         function draw() {
+            $("#movingicon").hide();
             document.getElementById("holder" + end).innerHTML +=
                 "<span class='glyphicon glyphicon-"+ player[turn].token +"' title='" + player[turn].name + "' aria-hidden='true' style='color: " + player[turn].color + ";'></span>";
         }
+
     }
 }
 
@@ -887,7 +904,6 @@ function toast(msg,color,type){
 
 function infoDisplay(msg,color,tradetype,seller,buyer,sid,money)
 {
-
     var disarea = document.getElementById("displayInfo");
     var info = disarea.appendChild(document.createElement("p"));
     info.className = "triangle-obtuse";
@@ -916,7 +932,6 @@ function infoDisplay(msg,color,tradetype,seller,buyer,sid,money)
 
     }
     info.style.borderColor = color;
-
 
     $("#displayInfo").scrollTop($("#displayInfo").prop("scrollHeight"));
 }
@@ -960,14 +975,12 @@ function acceptSellDeal(tradetype,seller,buyer,sid,money) {
 
 }
 
-function land()
-{
+function land() {
     $("#movingicon").hide();
     var p = player[turn];
     var s = square[p.position];
 
-    switch (s.groupNumber)
-    {
+    switch (s.groupNumber) {
         case 0:
             switch (p.position){
                 case 4:
@@ -993,8 +1006,8 @@ function land()
                 case 36:
                     rate = 1.1;round2=2;
                     // popup(p.position,2);
-                    toast(p.name+" 到达香港，所有房产租金连续三回合提升10%.");
-                    toast(p.name+" 到达香港，所有房产租金连续三回合提升10%.","#000000",1);
+                    infoDisplay(p.name+" 到达香港，所有房产租金连续三回合提升10%，持续3回合.");
+                    toast(p.name+" 到达香港，所有房产租金连续三回合提升10%，持续3回合.","#000000",1);
                     break;
                 case 50:
                     dir=-1;round=2;
@@ -1003,7 +1016,7 @@ function land()
                     toast(p.name+" 到达中国城，所有玩家的行走方向反向，持续3回合.","#000000",1);
                     break;
             }
-            break;
+            break
         case 1:
             //公司
             switch (p.position){
@@ -1016,7 +1029,7 @@ function land()
                     //红十字 拥有者到达时获得一张免费出狱卡
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id&&!p.mortgage){
+                    else if(s.owner==p.id&&!s.mortgage){
                         p.JailCard++;
                         infoDisplay("作为红十字的拥有者 "+p.name+" 到达了红十字，获得了一张免费出狱卡");
                     }
@@ -1024,7 +1037,7 @@ function land()
                 case 25:
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id&&!p.mortgage){
+                    else if(s.owner==p.id&&!s.mortgage){
                         infoDisplay("作为ORACLE的拥有者，"+p.name+" 在之后的2回合内免交房租");
                         round3 = 1;
                     }
@@ -1034,7 +1047,7 @@ function land()
                     //苹果 拥有者可以向其他所有用户征收其资产的10%
                     if(s.owner==-1)
                         popup(p.position,1);
-                    else if(s.owner==p.id&&!p.mortgage){
+                    else if(s.owner==p.id&&!s.mortgage){
                         var levy=0;
                         for(var i=0;i<pcount;i++){
                             if(i!=turn){
@@ -1054,45 +1067,24 @@ function land()
             }
             break;
         case 2:
-            switch (p.position) {
-                case 35:
-                    popup(p.position,2);
-                    game.goToJail();
-                    break;
-                case 7:
-                    // 公益基金", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
-                    game.pickCard();
-                    break;
-                case 22:
-                    // 联合国", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
-                    game.pickCard();
-                    break;
-                case 33:
-                    // 机遇", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
-                    game.pickCard();
-                    break;
-                case 47:
-                    // 迪拜", "请遵从卡片的指示", "#FFFFFF", 0, 2);//2
-                    game.pickCard();
-                    break;
-            }
+            if (p.position==35) {
+                popup(p.position,2);
+                game.goToJail();
+            }else
+                game.pickCard();
             break;
         default:
-            if(s.owner==-1){
-                //无主 可以购买
+            if(s.owner==-1)//无主 可以购买
                 popup(p.position,0);
-            }else if(s.owner==p.id){
-                if (s.level<4)
+            else if(s.owner==p.id&&s.level<4)
                     levelUp(p.position);
-            }else if(!s.mortgage){
-                //支付租金
+            else if(!s.mortgage){//支付租金
                 game.pay();
                 if(square[44].owner==p.id&&s.level==0&&!square[44].mortgage)
                     popup(p.position,4);
             }
             break;
     }
-
 }
 
 function endTurn()
@@ -1141,20 +1133,24 @@ function popup(position,type)
                 "<div><span>三级房租: $" + s.rent3 + "  </span>" +
                 "<span>旅馆房租: $" + s.rent4 + "</span></div>" +
                 "<span>升级费用: $" + s.houseprice + "</span></div>";
-        }else if(type==1){
+        }
+        else if(type==1){
             document.getElementById("popuptext").innerHTML =
                 "<h3>" + s.name + "</h3>" +
                 "<div>购买价格: $" + s.price + "  </div>" +
                 "<div>说明: " + s.pricetext + "</div>" ;
-        }else if(type==2){
+        }
+        else if(type==2) {
             document.getElementById("popuptext").innerHTML =
                 "<h3>" + s.name + "</h3>" +
                 "<div>说明: " + s.pricetext + "</div>";
-        } else if(type==3){
+        }
+        else if(type==3){
             document.getElementById("popuptext").innerHTML =
                 "<h3>" + s.name + "</h3>" +
                 "<div>您是否愿意花$50保释自己</div>";
-        }else if(type==4){
+        }
+        else if(type==4){
             document.getElementById("popuptext").innerHTML =
                 "<h3 style='color:" + s.color + "'>" + s.name + "</h3>" +
                 "<div><span>购买价格: $" + s.price + "  </span>" +
@@ -1165,13 +1161,15 @@ function popup(position,type)
                 "<span>旅馆房租: $" + s.rent4 + "</span></div>" +
                 "<span>升级费用: $" + s.houseprice + "</span></div>" +
                 "<div>作为IBM的拥有者，您可以选择从对方手上强购该房产</div>";
-        } else if(type==5){
+        }
+        else if(type==5){
             document.getElementById("popuptext").innerHTML =
                 "<h3>" + s.name + "</h3>" +
                 "<div>原购买价格: $" + s.price + "  </div>" +
                 "<div>说明: " + s.pricetext + "</div>" +
                 "<div>您可以选择花费 $50 购得该公司</div>";
-        }else if(type==6){
+        }
+        else if(type==6){
             document.getElementById("popuptext").innerHTML =
                 "<h3 style='color: red'> 恭喜</h3>" +
                 "<div>" + player[0].name+ "获得了最后的胜利 </div>" +
@@ -1350,12 +1348,13 @@ function bankrupt()
             document.getElementById("owenerholder"+i).style.border = "";
             document.getElementById("owenerholder"+i).innerText = "";
             s.owner = -1;
+            s.level = 0;
             s.mortgage=false;
         }
     }
-    player.splice(turn,1);pcount--;
+    player.splice(turn,1);
+    pcount--;
     updatePosition(100,100);
-
 
         $("#endTurn").prop('disabled', true);
         $("#rollbtn").prop('disabled', false);
@@ -1384,15 +1383,11 @@ function mouse(i)
 {
     if (i=="20_5"){
         $("#jail").on("mousemove", function(e) {
-            // console.log(i);
             var element = document.getElementById("enlarge20_5");
-
-            if (e.clientY + 20 > window.innerHeight - 204) {
-                // console.log(window.innerHeight - 204);
+            if (e.clientY + 20 > window.innerHeight - 204)
                 element.style.top = (window.innerHeight - 204) + "px";
-            } else {
+            else
                 element.style.top = (e.clientY + 20) + "px";
-            }
             element.style.left = (e.clientX + 10) + "px";
         }).on("mouseover",function () {
             $("#enlarge20_5").show();
@@ -1400,35 +1395,26 @@ function mouse(i)
             $("#enlarge20_5").hide();
         });
     }else{
-
-    $("#cell"+i).on("mousemove", function(e) {
-        // console.log(i);
-        var element = document.getElementById("enlarge"+i);
-
-        if (e.clientY + 20 > window.innerHeight - 204) {
-            // console.log(window.innerHeight - 204);
-            element.style.top = (window.innerHeight - 204) + "px";
-        } else {
-            element.style.top = (e.clientY + 20) + "px";
-        }
-        element.style.left = (e.clientX + 10) + "px";
-    }).on("mouseover",function () {
-        $("#enlarge" + i).show();
-    }).on("mouseout", function() {
-        $("#enlarge" + i).hide();
-    });
+        $("#cell"+i).on("mousemove", function(e) {
+            var element = document.getElementById("enlarge"+i);
+            if (e.clientY + 20 > window.innerHeight - 204)
+                element.style.top = (window.innerHeight - 204) + "px";
+            else
+                element.style.top = (e.clientY + 20) + "px";
+            element.style.left = (e.clientX + 10) + "px";
+        }).on("mouseover",function () {
+            $("#enlarge" + i).show();
+        }).on("mouseout", function() {
+            $("#enlarge" + i).hide();
+        });
     }
 }
 
-function deed()
-{
-
+function deed(){
     var s;
-
     for (var i = 0; i < 52; i++) {
         if(i!=21){
         s = square[i];
-
         document.getElementById("enlarge" + i + "color").style.backgroundColor = s.color;
         document.getElementById("enlarge" + i + "name").textContent = s.name;
         document.getElementById("enlarge" + i + "price").textContent = s.pricetext;
@@ -1526,8 +1512,7 @@ function showdeed(property)
         document.getElementById("deed-mortgaged-mortgage").textContent = parseInt(sq.price/2 + sq.level*(sq.houseprice/2));
 
     } else {
-
-        if (sq.groupNumber >= 3) {
+        if (sq.groupNumber >= 3){
             $("#deed-normal").show();
             document.getElementById("deed-header").style.backgroundColor = sq.color;
             document.getElementById("deed-name").textContent = sq.name;
@@ -1539,14 +1524,15 @@ function showdeed(property)
             document.getElementById("deed-price").textContent = sq.price;
             document.getElementById("deed-mortgage").textContent = parseInt(sq.price/2 + sq.level*(sq.houseprice/2));
             document.getElementById("deed-houseprice").textContent = sq.houseprice;
-
-        } else if (sq.groupNumber == 2) {
+        }
+        else if (sq.groupNumber == 2) {
             $("#deed-special").show();
             document.getElementById("deed-special-name").textContent = sq.name;
             document.getElementById("deed-special-text").innerHTML = sq.pricetext;
             document.getElementById("deed-special-mortgage").textContent = parseInt(sq.price/2 + sq.level*(sq.houseprice/2));
 
-        } else if (sq.groupNumber == 1) {
+        }
+        else if (sq.groupNumber == 1) {
             $("#deed-special").show();
             document.getElementById("deed-special-name").textContent = sq.name;
             document.getElementById("deed-special-text").innerHTML = sq.pricetext;
@@ -1555,8 +1541,7 @@ function showdeed(property)
     }
 }
 
-function hidedeed()
-{
+function hidedeed() {
     $("#deed").hide();
 }
 

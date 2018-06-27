@@ -14,31 +14,25 @@
  * @constructor
  */
 function Square(name, pricetext, color, price, groupNumber, rent0, rent1, rent2, rent3, rent4) {
-	this.name = name;
-	this.pricetext = pricetext;
-	this.color = color;
-	this.owner = -1;
-	this.mortgage = false;
-	this.groupNumber = groupNumber || 0;
-	this.price = (price || 0);
-	this.rent0 = (rent0 || 0);
-	this.rent1 = (rent1 || 0);
-	this.rent2 = (rent2 || 0);
-	this.rent3 = (rent3 || 0);
-	this.rent4 = (rent4 || 0);
-	this.level = 0;
-	
-	if (groupNumber === 3 || groupNumber === 4) {
-		this.houseprice = 50;
-	} else if (groupNumber === 5 || groupNumber === 6 || groupNumber === 7) {
-		this.houseprice = 100;
-	} else if (groupNumber === 8 || groupNumber === 9) {
-		this.houseprice = 150;
-	} else if (groupNumber === 10 || groupNumber === 11 || groupNumber === 12) {
-		this.houseprice = 200;
-	} else {
-		this.houseprice = 0;
-	}
+	this.name = name;                       //地产名称
+	this.pricetext = pricetext;             //地产价格或地产功能说明
+	this.color = color;                     //地产色号
+	this.owner = -1;                        //地主id
+	this.mortgage = false;                  //抵押与否
+	this.groupNumber = groupNumber || 0;    //地群编号
+	this.price = (price || 0);              //购买价格
+	this.rent0 = (rent0 || 0);              //原始房产租金
+	this.rent1 = (rent1 || 0);              //1级房产租金
+	this.rent2 = (rent2 || 0);              //2级房产租金
+	this.rent3 = (rent3 || 0);              //3级房产租金
+	this.rent4 = (rent4 || 0);              //4级房产租金
+	this.level = 0;                         //等级
+	//升级费用
+	if (groupNumber === 3 || groupNumber === 4) this.houseprice = 50;
+    else if (groupNumber === 5 || groupNumber === 6 || groupNumber === 7) this.houseprice = 100;
+	else if (groupNumber === 8 || groupNumber === 9) this.houseprice = 150;
+    else if (groupNumber === 10 || groupNumber === 11 || groupNumber === 12) this.houseprice = 200;
+	else this.houseprice = 0;
 
     this.getString = function (square){
         return square.name+" "+square.owner+" "+square.level+" "+square.mortgage+" "+square.rent0+"\n";
@@ -52,8 +46,8 @@ function Square(name, pricetext, color, price, groupNumber, rent0, rent1, rent2,
  * @constructor
  */
 function Card(text, action) {
-    this.text = text;
-    this.action = action;
+    this.text = text;       //运气卡内容
+    this.action = action;   //运气卡的执行函数
 }
 
 /**
@@ -63,15 +57,15 @@ function Card(text, action) {
  * @constructor
  */
 function Player(name, color, token, id) {
-	this.id = id;
-    this.name = name;
-    this.color = color;
-    this.token = token;
-    this.position = 0;
-    this.money = 1500;
-    this.jail = false;
-    this.jailroll = 0;
-    this.JailCard = 1;
+	this.id = id;       //玩家id
+    this.name = name;   //玩家名
+    this.color = color; //玩家颜色
+    this.token = token; //玩家棋子
+    this.position = 0;  //玩家位置
+    this.money = 1500;  //玩家现金
+    this.jail = false;  //是否在监狱
+    this.jailroll = 0;  //在监狱呆的回合数
+    this.JailCard = 1;  //出狱卡张数
 
     this.getString = function (player){
         return player.id+" "+player.name+" "+player.color+" "+player.token+" "+player.position+" "+player.money+" "+player.jail+" "+player.jailroll+" "+player.JailCard+"\n";
